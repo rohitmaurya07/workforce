@@ -1,0 +1,282 @@
+# Software Requirements Specification (SRS)
+
+## Project Title
+
+Project Management System (PMS)
+
+## Version
+
+1.0
+
+## 1. Introduction
+
+### 1.1 Purpose
+
+The purpose of this system is to provide organizations with a centralized platform for managing projects, assigning tasks, tracking employee performance, monitoring project progress, and improving team collaboration.
+
+### 1.2 Scope
+
+The Project Management System enables administrators, team leads, and employees to manage projects efficiently through task assignment, progress tracking, file sharing, notifications, and reporting.
+
+### 1.3 Intended Users
+
+* Company Owners / Administrators
+* Team Leads / Managers
+* Employees
+
+---
+
+# 2. Overall Description
+
+## 2.1 Product Perspective
+
+The system is a web-based application accessible through browsers on desktop and mobile devices.
+
+## 2.2 Product Functions
+
+### Admin Functions
+
+* User management
+* Project creation and management
+* Task creation and assignment
+* Priority and deadline management
+* Employee performance monitoring
+* Analytics and reporting
+
+### Team Lead Functions
+
+* Team member management
+* Task review
+* Task reassignment
+* Progress reporting
+
+### Employee Functions
+
+* View assigned tasks
+* Update task status
+* Upload work files
+* Comment on tasks
+* Receive notifications
+
+---
+
+# 3. Functional Requirements
+
+## FR-01 Authentication
+
+* Users can register and login.
+* Passwords must be encrypted.
+* JWT-based authentication.
+
+## FR-02 Role-Based Access Control
+
+Roles:
+
+* Admin
+* Team Lead
+* Employee
+
+Each role has different permissions.
+
+## FR-03 Project Management
+
+Admin can:
+
+* Create projects
+* Edit projects
+* Archive projects
+* Delete projects
+
+Project fields:
+
+* Project Name
+* Description
+* Start Date
+* End Date
+* Status
+
+## FR-04 Task Management
+
+Admin/Lead can:
+
+* Create tasks
+* Assign tasks
+* Set deadlines
+* Set priorities
+
+Task fields:
+
+* Title
+* Description
+* Assigned Employee
+* Due Date
+* Priority
+* Status
+
+## FR-05 Task Status Tracking
+
+Status Types:
+
+* To Do
+* In Progress
+* Completed
+
+Employees can update status.
+
+## FR-06 File Upload Management
+
+Employees can:
+
+* Upload files
+* Submit deliverables
+
+Supported Formats:
+
+* PDF
+* DOCX
+* JPG
+* PNG
+* ZIP
+
+## FR-07 Comments & Collaboration
+
+Users can:
+
+* Comment on tasks
+* Mention team members
+* View task discussions
+
+## FR-08 Notifications
+
+Notifications for:
+
+* New task assignment
+* Deadline reminders
+* Task completion
+* Comments
+
+## FR-09 Dashboard
+
+Dashboard displays:
+
+* Total Projects
+* Active Projects
+* Completed Projects
+* Pending Tasks
+* Team Performance Metrics
+
+## FR-10 Reports & Analytics
+
+Generate reports:
+
+* Employee productivity
+* Project progress
+* Task completion rates
+* Overdue tasks
+
+## FR-11 Search & Filters
+
+Search by:
+
+* Project Name
+* Employee
+* Task Name
+
+Filters:
+
+* Status
+* Priority
+* Date Range
+
+## FR-12 Activity Logs
+
+Record:
+
+* User Login
+* Project Creation
+* Task Assignment
+* Status Updates
+* File Uploads
+
+---
+
+# 4. Non-Functional Requirements
+
+## Performance
+
+* Response time under 3 seconds
+* Support 100+ concurrent users
+
+## Security
+
+* JWT Authentication
+* Password Hashing (bcrypt)
+* Role-based authorization
+
+## Reliability
+
+* 99% uptime
+
+## Scalability
+
+* Support future modules
+
+## Usability
+
+* Responsive UI
+* Mobile-friendly design
+
+---
+
+# 5. Database Requirements
+
+Collections:
+
+Users
+Projects
+Tasks
+Comments
+Notifications
+ActivityLogs
+Files
+
+---
+
+# 6. Technology Stack
+
+Frontend:
+
+* Next.js
+* Tailwind CSS
+
+Backend:
+
+* Node.js
+* Express.js
+
+Database:
+
+* MongoDB
+
+Authentication:
+
+* JWT
+* bcrypt
+
+File Storage:
+
+* Cloudinary / Local Storage
+
+Deployment:
+
+* Vercel (Frontend)
+* Render / Railway (Backend)
+* MongoDB Atlas
+
+---
+
+# 7. Assumptions
+
+* Users have internet access.
+* Email notifications are optional.
+* Admin creates all projects.
