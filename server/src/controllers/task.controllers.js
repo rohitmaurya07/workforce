@@ -7,7 +7,6 @@ export const createTask = async (
   res
 ) => {
   try {
-    console.log(req.body)
     const task =
       await Task.create({
         ...req.body,

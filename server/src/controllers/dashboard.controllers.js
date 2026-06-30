@@ -6,7 +6,6 @@ export const getDashboardStats =
   async (req, res) => {
     try {
 
-        console.log("hel")
       const totalUsers =
         await User.countDocuments();
 

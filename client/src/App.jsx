@@ -6,6 +6,7 @@ import { getCurrentUser } from "./modules/authentication/redux/authSlice";
 import { useEffect } from "react";
 import { getMyProjects, getProfile, getUserDashboard } from "./modules/admin/redux/userSlice";
 import { getAdminDashboard, getAllProjects, getAllUsers } from "./modules/admin/redux/adminSlice";
+import { socket } from "./socket/socket";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -43,6 +44,20 @@ useEffect(() => {
     dispatch(getMyProjects());
   }
 }, [dispatch, user]);
+
+    useEffect(() => {
+
+        socket.on("connect", () => {
+            console.log("Connected");
+        });
+
+        return () => {
+            socket.off("connect");
+        };
+
+    }, []);
+
+
 
 
 if (authLoading) {

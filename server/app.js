@@ -8,6 +8,7 @@ import adminRoutes from "./src/routes/admin.routes.js";
 import projectRoutes from "./src/routes/project.routes.js";
 import taskRoutes from "./src/routes/task.routes.js";
 import employeeRoutes from "./src/routes/employee.routes.js";
+import messageRoutes from "./src/routes/message.routes.js";
 
 const app = express()
 
@@ -27,5 +28,6 @@ app.use("/api/employee", employeeRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/messages", messageRoutes);
 
 export default app

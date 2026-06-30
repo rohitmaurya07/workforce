@@ -90,23 +90,6 @@ export const getProfile = () => async (dispatch) => {
     }
 };
 
-export const getMyTasks = () => async (dispatch) => {
-    dispatch(setLoading(true));
-    try {
-        const response = await axiosInstance.get("/employee/tasks");
-        if (response.data.success) {
-            dispatch(setTasks(response.data.tasks))
-            console.log(response.data)
-          }
-      
-    } catch (error) {
-        const message = error.response?.data?.message || "Failed to fetch Tasks";
-        dispatch(setError(message));
-    } finally {
-        dispatch(setLoading(false));
-    }
-};
-
 // Get User Dashboard
 export const getUserDashboard = () => async (dispatch) => {
     dispatch(setLoading(true));
@@ -124,6 +107,21 @@ export const getUserDashboard = () => async (dispatch) => {
     }
 };
 
+export const getMyTasks = () => async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+        const response = await axiosInstance.get("/employee/tasks");
+        if (response.data.success) {
+            dispatch(setTasks(response.data.tasks))
+          }
+      
+    } catch (error) {
+        const message = error.response?.data?.message || "Failed to fetch Tasks";
+        dispatch(setError(message));
+    } finally {
+        dispatch(setLoading(false));
+    }
+};
 
 // Get Task By id
 export const getTaskById = (id) => async (dispatch) => {
@@ -142,7 +140,6 @@ export const getTaskById = (id) => async (dispatch) => {
         dispatch(setLoading(false));
     }
 };
-
 
 // Update Task Status 
 export const updateTaskStatus = ({id,status}) => async (dispatch) => {

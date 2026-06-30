@@ -146,7 +146,6 @@ export const googleLogin = async (req, res) => {
       });
 
     const payload = ticket.getPayload();
-console.log(payload)
     if (!payload) {
       return res.status(401).json({
         message: "Invalid token",

@@ -106,9 +106,7 @@ const UserDetail = ({ stats = MOCK_STATS, tasks = MOCK_RECENT_TASKS, onBack }) =
 const dispatch = useDispatch()
   const completionRate = Math.round((stats.tasksCompleted / stats.tasksAssigned) * 100);
   const {employee,loading} = useSelector((state)=>state.admin)
-console.log(employee)
   useEffect(() => {
-    console.log(id)
     dispatch(getUserDetailsById(id))
   }, [])
   

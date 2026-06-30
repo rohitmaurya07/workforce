@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteTaskById, getTaskById, updateTaskStatus } from "../redux/userSlice";
+import Chat from "./Chat";
 
 const priorityConfig = {
   High:   { dot: "bg-red-400",     badge: "bg-red-500/10 text-red-400 ring-1 ring-red-500/20" },
@@ -195,63 +196,8 @@ const TaskDetail = () => {
           </div>
         </div>
 
-        {/* ── Comments ── */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
-          <div className="flex items-center justify-between mb-5">
-            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">Comments</p>
-            <span className="text-xs text-slate-600 bg-slate-800 border border-slate-700 px-2 py-0.5 rounded-full">
-              {task.comments?.length ?? 0}
-            </span>
-          </div>
-
-          {/* Comment list */}
-          <div className="space-y-5">
-            {task.comments?.length > 0 ? (
-              task.comments.map((c) => (
-                <div key={c._id} className="flex gap-3">
-                  <Avatar name={c.userId?.name} size="sm" />
-                  <div className="flex-1 min-w-0 bg-slate-800/60 rounded-xl px-4 py-3">
-                    <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span className="text-xs font-semibold text-slate-200">{c.userId?.name}</span>
-                      <span className="text-[10px] text-slate-600 flex-shrink-0">
-                        {new Date(c.createdAt).toLocaleDateString("en-US", {
-                          month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                    <p className="text-sm text-slate-400 leading-relaxed">{c.content}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-sm text-slate-600">No comments yet. Be the first to add one.</p>
-              </div>
-            )}
-          </div>
-
-          {/* New comment input */}
-          <div className="border-t border-slate-800 mt-5 pt-5 flex gap-3">
-            <Avatar name={user?.name} size="sm" />
-            <div className="flex-1 min-w-0">
-              <textarea
-                rows={3}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Write a comment..."
-                className="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl p-3 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 resize-none transition-all"
-              />
-              <div className="flex justify-end mt-2">
-                <button
-                  disabled={!comment.trim()}
-                  className="bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 disabled:cursor-not-allowed text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
-                >
-                  Post
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Comments */}
+      <Chat/> 
 
       </div>
     </div>

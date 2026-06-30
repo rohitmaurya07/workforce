@@ -21,13 +21,10 @@ export default function LoginPanel() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  // const [authState, setAuthState] = useState(null);  // { user, token }
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  // const selectedRole = ROLES.find(r => r.id === role);
     const { user } = useSelector((state) => state.auth);
     
-console.log("User is : ",user)
 
   async function handleSubmit() {
     setError("");
@@ -40,7 +37,6 @@ console.log("User is : ",user)
       })
     );
 
-    console.log("Login Success ",success)
     if (success) {
       navigate("/");
     }
@@ -65,8 +61,6 @@ console.log("User is : ",user)
         password,
       })
     );
-    console.log(name, email, password)
-
     doLogin(newUser, token);
   }
 
@@ -79,7 +73,6 @@ console.log("User is : ",user)
   googleLogin(credentialResponse.credential)
 );
 
-    console.log("Google Success ",success)
 
       if (success) {
         navigate("/");

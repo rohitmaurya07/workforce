@@ -196,14 +196,12 @@ export const createTask =
 
     try {
 
-      console.log("task : ",task)
       const { data } =
         await axiosInstance.post(
           "/admin/tasks",
           task
         );
 
-        console.log(data)
 
        if (data.success) {
              dispatch(addTask(data.task));
@@ -230,7 +228,6 @@ export const createProject =
 
     try {
 
-      console.log("Frontend Project : ",project)
       const { data } =
         await axiosInstance.post(
           "/admin/project",
@@ -262,13 +259,10 @@ export const createProject =
 
     try {
 
-      console.log("Response getting User By Id : ",id)
       const {data} = await axiosInstance.get(`/admin/users/${id}`);
-      console.log("Response getting User By Id : ",data)
 
         if (data.success) {
           toast(data.message)
-          console.log(data.user)
           dispatch(setEmployee(data.user))
         }
 

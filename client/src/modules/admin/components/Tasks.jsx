@@ -153,7 +153,6 @@ const Tasks = () => {
                             {
                               isAdmin ? <div>Assigned To : {t?.assignedTo?.name}</div> : <div>Assigned By : {t?.assignedBy?.name}</div> 
                             }
-                            {/* {t.assignedBy?.[0] ?? "?"} */}
                           </span>
                         </div>
                         <span className="text-xs text-slate-400 truncate">{t.assignee}</span>
