@@ -5,16 +5,16 @@ import { deleteTaskById, getTaskById, updateTaskStatus } from "../redux/userSlic
 import Chat from "./Chat";
 
 const priorityConfig = {
-  High:   { dot: "bg-red-400",     badge: "bg-red-500/10 text-red-400 ring-1 ring-red-500/20" },
-  Medium: { dot: "bg-amber-400",   badge: "bg-amber-400/10 text-amber-400 ring-1 ring-amber-400/20" },
-  Low:    { dot: "bg-emerald-400", badge: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20" },
+  High: { dot: "bg-red-400", badge: "bg-red-500/10 text-red-400 ring-1 ring-red-500/20" },
+  Medium: { dot: "bg-amber-400", badge: "bg-amber-400/10 text-amber-400 ring-1 ring-amber-400/20" },
+  Low: { dot: "bg-emerald-400", badge: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20" },
 };
 
 const statusConfig = {
-  Todo:        { label: "To Do",       bar: "bg-slate-500",   badge: "bg-slate-500/10 text-slate-400 ring-1 ring-slate-500/20" },
-  "In Progress":{ label: "In Progress", bar: "bg-blue-400",    badge: "bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20" },
-  Review:      { label: "Review",      bar: "bg-violet-400",  badge: "bg-violet-500/10 text-violet-400 ring-1 ring-violet-500/20" },
-  Done:        { label: "Done",        bar: "bg-emerald-400", badge: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20" },
+  Todo: { label: "To Do", bar: "bg-slate-500", badge: "bg-slate-500/10 text-slate-400 ring-1 ring-slate-500/20" },
+  "In Progress": { label: "In Progress", bar: "bg-blue-400", badge: "bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20" },
+  Review: { label: "Review", bar: "bg-violet-400", badge: "bg-violet-500/10 text-violet-400 ring-1 ring-violet-500/20" },
+  Done: { label: "Done", bar: "bg-emerald-400", badge: "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20" },
 };
 
 const Avatar = ({ name, size = "md" }) => {
@@ -36,12 +36,11 @@ const MetaRow = ({ label, children }) => (
 
 const TaskDetail = () => {
   const { task } = useSelector((state) => state.user);
-  const { user } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [comment, setComment] = useState("");
 
   const isAdmin = user?.role === "admin";
 
@@ -62,7 +61,7 @@ const TaskDetail = () => {
   );
 
   const priority = priorityConfig[task.priority] || priorityConfig.Low;
-  const status   = statusConfig[task.status]     || statusConfig.Todo;
+  const status = statusConfig[task.status] || statusConfig.Todo;
 
   const handleUpdateTaskStatus = () => dispatch(updateTaskStatus({ id: task._id, status: selectedStatus }));
   const handleDeleteTask = () => { dispatch(deleteTaskById(task._id)); navigate("/tasks"); };
@@ -88,7 +87,6 @@ const TaskDetail = () => {
 
         {/* ── Header Card ── */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-          {/* colored top bar */}
           <div className={`h-0.5 w-full ${status.bar}`} />
           <div className="p-5 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-start gap-4">
@@ -109,7 +107,6 @@ const TaskDetail = () => {
               </div>
             </div>
 
-            {/* Footer strip */}
             <div className="mt-5 pt-4 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2 text-xs text-slate-500">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -135,69 +132,73 @@ const TaskDetail = () => {
           </div>
         </div>
 
-        {/* ── Details + Actions ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* ── Body grid: Details + Actions / Chat ── */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mt-6">
+          {/* Details + Actions */}
+          <div className="xl:col-span-4 space-y-6">
+            {/* Task Info */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-5">Task Details</p>
+              <div className="space-y-5">
+                <MetaRow label="Project">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-sm bg-indigo-500" />
+                    {task.projectId?.name ?? "—"}
+                  </div>
+                </MetaRow>
+                <MetaRow label="Assigned To">
+                  <div className="flex items-center gap-2">
+                    <Avatar name={task.assignedTo?.name} size="sm" />
+                    {task.assignedTo?.name ?? "—"}
+                  </div>
+                </MetaRow>
+                <MetaRow label="Created By">
+                  <div className="flex items-center gap-2">
+                    <Avatar name={task.assignedBy?.name} size="sm" />
+                    {task.assignedBy?.name ?? "—"}
+                  </div>
+                </MetaRow>
+              </div>
+            </div>
 
-          {/* Task Info */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
-            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-5">Task Details</p>
-            <div className="space-y-5">
-              <MetaRow label="Project">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-sm bg-indigo-500" />
-                  {task.projectId?.name ?? "—"}
+            {/* Actions */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
+              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-5">Actions</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-slate-500 mb-1.5 block">Update Status</label>
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    className="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 transition-all cursor-pointer"
+                  >
+                    <option value="todo">Todo</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="review">Review</option>
+                    <option value="completed">Done</option>
+                  </select>
                 </div>
-              </MetaRow>
-              <MetaRow label="Assigned To">
-                <div className="flex items-center gap-2">
-                  <Avatar name={task.assignedTo?.name} size="sm" />
-                  {task.assignedTo?.name ?? "—"}
-                </div>
-              </MetaRow>
-              <MetaRow label="Created By">
-                <div className="flex items-center gap-2">
-                  <Avatar name={task.assignedBy?.name} size="sm" />
-                  {task.assignedBy?.name ?? "—"}
-                </div>
-              </MetaRow>
+                <button
+                  onClick={handleUpdateTaskStatus}
+                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
+                >
+                  Save Status
+                </button>
+                <button className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-sm font-medium py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                  </svg>
+                  Upload Work
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
-            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-5">Actions</p>
-            <div className="space-y-3">
-              <div>
-                <label className="text-xs text-slate-500 mb-1.5 block">Update Status</label>
-                <select
-                  value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 transition-all cursor-pointer"
-                >
-                  <option value="todo">Todo</option>
-                  <option value="in_progress">In Progress</option>
-                  <option value="review">Review</option>
-                  <option value="completed">Done</option>
-                </select>
-              </div>
-              <button
-                onClick={handleUpdateTaskStatus}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
-              >
-                Save Status
-              </button>
-              <button className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-sm font-medium py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                </svg>
-                Upload Work
-              </button>
-            </div>
+          {/* Chat */}
+          <div className="xl:col-span-8">
+            <Chat />
           </div>
         </div>
-
-      {/* Comments */}
-      <Chat/> 
 
       </div>
     </div>

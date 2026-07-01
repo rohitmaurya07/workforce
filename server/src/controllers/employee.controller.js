@@ -41,7 +41,18 @@ export const updateTaskStatus =
   async (req, res) => {
     try {
       const { status } = req.body;
-
+      const user = await User.findById(req.user.id);
+      if (!user) {
+  return res.status(404).json({
+    success: false,
+    message: "User not found",
+  });
+}
+      if (!user.isActive) 
+        return res.json({
+          success: false,
+          message: "You cant Update Task Status as Your Account is Not Active"
+      })
       const task =
         await Task.findById(
           req.params.id

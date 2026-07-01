@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { deleteProjectById, getProjectById } from "../redux/userSlice";
 import { PlusCircle, X } from "lucide-react";
-import { addMembersToProject } from "../redux/adminSlice";
+import { addMembersToProject, removeMembersFromProject } from "../redux/adminSlice";
+import Chat from "./Chat";
 
 // ── Design tokens ────────────────────────────────────────────────────────────
 
@@ -132,9 +133,9 @@ const TabTasks = ({ tasks = [] }) => {
   );
 };
 
-// ── Tab: Members ─────────────────────────────────────────────────────────────
+// Tab: Members 
 
-const TabMembers = ({ members = [] }) => {
+const TabMembers = ({ members = [] , handleRemoveMembers}) => {
   if (!members.length)
     return (
       <div className="flex flex-col items-center justify-center py-14 gap-3">
@@ -161,6 +162,7 @@ const TabMembers = ({ members = [] }) => {
               <p className="text-sm font-medium text-slate-200 truncate">{member.name}</p>
               <p className="text-xs text-slate-500 truncate">{member.email ?? member.role ?? "Team Member"}</p>
             </div>
+            <button onClick={()=>handleRemoveMembers(member._id)} className="bg-white text-black p-1 px-4 rounded-2xl ">Remove</button>
           </div>
         );
       })}
@@ -260,6 +262,12 @@ const ProjectDetail = () => {
   const { employees } = useSelector((state) => state.admin);
   const isAdmin = user?.role === "admin";
 
+  const totalTasks = project?.tasks?.length || 0;
+  const completedTasks = project?.tasks?.filter(
+        (task) => task.status === "completed"
+      ).length;
+  const calProgress = Math.round((completedTasks / totalTasks) * 100);
+
   useEffect(() => {
     dispatch(getProjectById(id));
   }, [id]);
@@ -279,6 +287,17 @@ const ProjectDetail = () => {
     setShowAddMember(false);
     setSelectedMembers([]);
   };
+
+  const handleRemoveMembers = async (memberId) => {
+  try {
+    console.log("Members Removed");
+
+    await removeMembersFromProject(project._id, memberId);
+    window.location.reload();
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
 
   // ── Loading / not found ──
   if (!project)
@@ -355,12 +374,12 @@ const ProjectDetail = () => {
           <div className="mt-5">
             <div className="flex justify-between items-center mb-2">
               <span className="text-xs text-slate-500">Overall Progress</span>
-              <span className="text-xs font-semibold text-slate-300">{project.progress}%</span>
+              <span className="text-xs font-semibold text-slate-300">{calProgress }%</span>
             </div>
             <div className="bg-slate-800 rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all duration-700 ${progressColor(project.progress)}`}
-                style={{ width: `${project.progress}%` }}
+                style={{ width: `${calProgress}%` }}
               />
             </div>
           </div>
@@ -508,11 +527,13 @@ const ProjectDetail = () => {
                     </button>
                   </div>
                 )}
-                <TabMembers members={project.members} />
+                <TabMembers handleRemoveMembers={handleRemoveMembers}  members={project.members} />
               </div>
             )}
           </div>
         </div>
+
+        <Chat/>3
       </div>
 
       {/* ── Add Member Modal ── */}

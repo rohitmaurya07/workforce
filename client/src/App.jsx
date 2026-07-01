@@ -12,7 +12,7 @@ const App = () => {
   const dispatch = useDispatch();
   const { user, loading: authLoading } = useSelector((state) => state.auth);
   const isAdmin = user?.role === "admin";
-
+console.log(user)
 // useEffect(() => {
 //   dispatch(getCurrentUser());
 //   dispatch(getProfile())

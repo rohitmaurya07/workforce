@@ -24,23 +24,35 @@ export const createProject = async (
   }
 };
 
-
-
-export const getProjects = async (
-  req,
-  res
-) => {
+export const getProjects = async (req, res) => {
   try {
-    const projects =
-      await Project.find()
-        .populate(
-          "createdBy",
-          "name email"
-        );
+    const projects = await Project.find()
+      .populate("createdBy", "name email")
+      .populate("tasks", "status");
+
+    const projectsWithProgress = projects.map((project) => {
+      const totalTasks = project.tasks.length;
+
+      const completedTasks = project.tasks.filter(
+        (task) => task.status === "completed"
+      ).length;
+
+      const progress =
+        totalTasks === 0
+          ? 0
+          : Math.round((completedTasks / totalTasks) * 100);
+
+      return {
+        ...project.toObject(),
+        progress,
+      };
+    });
+
+    console.log(projectsWithProgress)
 
     res.status(200).json({
       success: true,
-      projects,
+      projects: projectsWithProgress,
     });
   } catch (error) {
     res.status(500).json({
@@ -49,6 +61,30 @@ export const getProjects = async (
     });
   }
 };
+
+// export const getProjects = async (
+//   req,
+//   res
+// ) => {
+//   try {
+//     const projects =
+//       await Project.find()
+//         .populate(
+//           "createdBy",
+//           "name email"
+//         );
+
+//     res.status(200).json({
+//       success: true,
+//       projects,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
 
 
 export const updateProject = async (
@@ -109,7 +145,7 @@ export const getProjectById = async (req, res) => {
     const project = await Project.findById(req.params.id)
       .populate("createdBy", "name email")
       .populate("members", "name email")
-      .populate("tasks", "title description");
+      .populate("tasks", "title description status");
 
     if (!project) {
       return res.status(404).json({
@@ -218,6 +254,43 @@ export const addMembersToProject = async (req, res) => {
       success: true,
       message: "New members added successfully",
       addedMembers: newMembers,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Remove Members from Project
+export const removeMemberFromProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { members } = req.body;
+
+    const project = await Project.findByIdAndUpdate(
+      id,
+      {
+        $pull: {
+          members: { $in: members },
+        },
+      },
+      { new: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Members removed successfully",
+      project,
     });
   } catch (error) {
     res.status(500).json({

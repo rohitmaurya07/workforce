@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { teams, statusBadge } from '../data';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllUsers } from '../redux/adminSlice';
+import { deleteUserById, getAllUsers, toogleAccountStatus } from '../redux/adminSlice';
 import AddEmployeeModal from "./AddEmployeeModal";
 import { Link } from 'react-router-dom';
 
@@ -26,15 +26,19 @@ const Employees = () => {
     return matchesSearch && matchesTeam;
   });
 
-  const handleToggleStatus = (empId) => {
-    // dispatch your toggle action here
-    console.log("Toggle status for:", empId);
-  };
+ 
 
   const handleDelete = (empId) => {
     // dispatch your delete action here
     console.log("Delete employee:", empId);
+    dispatch(deleteUserById(empId))
   };
+  const handleToggleStatus = (empId) => {
+    console.log("employee:", empId);
+    dispatch(toogleAccountStatus(empId))
+  };
+
+  
 
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">

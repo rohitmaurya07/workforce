@@ -142,6 +142,15 @@ const Projects = () => {
                       <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
                         {p.description}
                       </p>
+                      {
+                        user._id !== p.createdBy._id ? (<p className="text-xs text-slate-300 mt-1 line-clamp-2 leading-relaxed">
+                        Created By : {p.createdBy.name} </p>)
+                        :
+                        (<p className="text-xs border-2 w-23 rounded-2xl p-1 text-slate-300 mt-1 line-clamp-2 leading-relaxed">
+                        Created By You
+                      </p>)
+                      
+                      }
                     </div>
                     <span
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ${sc.badge}`}
@@ -156,7 +165,7 @@ const Projects = () => {
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-xs text-slate-500">Progress</span>
-                      <span className="text-xs font-semibold text-slate-300">{p.progress ?? 0}%</span>
+                      <span className="text-xs font-semibold text-slate-300">{p.progress}%</span>
                     </div>
                     <div className="bg-slate-800 rounded-full h-1.5">
                       <div

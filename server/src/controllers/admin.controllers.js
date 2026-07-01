@@ -64,7 +64,6 @@ export const addEmployee = async (req, res) => {
 
 
 // Get User details by Id
-
 export const getUserById = async (req, res) => {
   try {
     // Ensure only admins can access
@@ -115,6 +114,59 @@ export const getUserById = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
+    });
+  }
+};
+
+// Delete USer By Id
+export const deleteUserById = async (req,res)=>{
+  try {
+      const {id} = req.params;
+      const user = await User.findByIdAndDelete(id)
+      return res.status(200).json({
+        message: "User Deleted From DataBase",
+        success: true,
+        user
+      })
+  } catch (error) {
+    console.log("error Came : ",error)
+  }
+}
+
+
+// Toggle Account Status of a Employee
+export const toggleEmployeeAccountStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { isActive: !user.isActive },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: `Employee account ${
+        updatedUser.isActive ? "activated" : "deactivated"
+      } successfully`,
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

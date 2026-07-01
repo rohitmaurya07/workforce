@@ -149,6 +149,8 @@ export const updateTaskStatus = ({id,status}) => async (dispatch) => {
         const {data} = await axiosInstance.patch(`/employee/tasks/${id}/status`,{status});
        if (data.success) {
             toast(data.message)
+       }else{
+        toast(data.message)
        }
     } catch (error) {
         const message = error.response?.data?.message || "Failed to fetch Profile";
