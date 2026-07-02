@@ -54,7 +54,12 @@ const taskSchema = new mongoose.Schema(
 
     attachments: [
       {
-        type: String,
+        fileName: String,
+        fileUrl: String,
+        publicId: String,
+        mimeType: String,
+        size: String,
+        uploadedAt: Date,
       },
     ],
   },

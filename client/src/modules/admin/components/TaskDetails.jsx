@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { deleteTaskById, getTaskById, updateTaskStatus } from "../redux/userSlice";
+import { deleteTaskById, getTaskById, updateTaskStatus, uploadTaskSubmission } from "../redux/userSlice";
 import Chat from "./Chat";
+import { Upload, File, Loader2, FileX, Download, Trash2 } from "lucide-react";
+import toast from "react-hot-toast";
 
 const priorityConfig = {
   High: { dot: "bg-red-400", badge: "bg-red-500/10 text-red-400 ring-1 ring-red-500/20" },
@@ -41,6 +43,8 @@ const TaskDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const isAdmin = user?.role === "admin";
 
@@ -65,6 +69,41 @@ const TaskDetail = () => {
 
   const handleUpdateTaskStatus = () => dispatch(updateTaskStatus({ id: task._id, status: selectedStatus }));
   const handleDeleteTask = () => { dispatch(deleteTaskById(task._id)); navigate("/tasks"); };
+
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
+    try {
+      setLoading(true);
+
+      const res = await uploadTaskSubmission(
+        task._id,
+        selectedFile
+      );
+
+      toast.success(res.message);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+ const formatSize = (bytes) => {
+    if (bytes == null) return "";
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+const formatDate = (date) =>
+  new Date(date).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+
+// inside your component:
+const safeFiles = task.attachments || [];
 
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
@@ -184,12 +223,7 @@ const TaskDetail = () => {
                 >
                   Save Status
                 </button>
-                <button className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-sm font-medium py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                  </svg>
-                  Upload Work
-                </button>
+                
               </div>
             </div>
           </div>
@@ -198,6 +232,123 @@ const TaskDetail = () => {
           <div className="xl:col-span-8">
             <Chat />
           </div>
+          <div className="w-screen max-w-md mx-auto rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-sm shadow-xl shadow-black/20 p-5 sm:p-6 text-white">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-slate-200 tracking-wide">
+                Files
+              </h3>
+              {task?.attachments?.length > 0 && (
+                <span className="text-xs text-slate-500">{task.attachments.length} total</span>
+              )}
+            </div>
+
+            {task.attachments && task.attachments.length > 0 ? (
+              <ul className="flex flex-col gap-2">
+                {task.attachments.map((file) => (
+                  <li
+                    key={file._id || file.fileName}
+                    className="group flex items-center gap-3 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 hover:bg-white/[0.07] hover:border-indigo-400/30 transition-colors duration-200"
+                  >
+                    <div className="flex items-center justify-center w-8 h-8 rounded-md bg-indigo-500/15 shrink-0">
+                      <File className="w-4 h-4 text-indigo-400" />
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-slate-200 truncate">{file.fileName}</p>
+                      <p className="text-xs text-slate-500">
+                        {formatSize(file.size)}
+                        {file.uploadedAt && ` · ${formatDate(file.uploadedAt)}`}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      {file.fileUrl && (
+                        <a
+                          href={`${import.meta.env.VITE_BACKEND_BASE_URL}/employee/tasks/${task._id}/attachments/${file._id}/download`}
+                          download={file.fileName}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1.5 rounded-md text-slate-400 hover:text-indigo-400 hover:bg-white/10 transition-colors"
+                          aria-label={`Download ${file.fileName}`}
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteFile(file.id)}
+                        className="p-1.5 rounded-md text-slate-400 hover:text-red-400 hover:bg-white/10 transition-colors"
+                        aria-label={`Delete ${file.name}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/15 px-4 py-8 text-center">
+                <FileX className="w-6 h-6 text-slate-600" />
+                <p className="text-sm text-slate-500">No files uploaded yet</p>
+              </div>
+            )}
+          </div>
+
+          <div className="w-screen ml-100 bg-red-200 max-w-md mx-auto rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-sm shadow-xl shadow-black/20 p-5 sm:p-6 text-white">
+            <h3 className="text-sm font-semibold text-slate-200 tracking-wide mb-4">
+              Upload a file
+            </h3>
+
+            <label
+              htmlFor="file-upload-input"
+              className="group flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 hover:border-indigo-400/60 hover:bg-white/[0.03] px-4 py-8 sm:py-10 cursor-pointer transition-all duration-200"
+            >
+              <div className="flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-900/40 group-hover:scale-105 transition-transform duration-200">
+                <Upload className="w-5 h-5 text-white" />
+              </div>
+              <p className="text-sm text-slate-300 text-center">
+                <span className="text-indigo-400 font-medium">Click to browse</span> or drag a file here
+              </p>
+              <input
+                id="file-upload-input"
+                type="file"
+                onChange={handleFileChange}
+                className="sr-only"
+              />
+            </label>
+
+            <div className="mt-4 min-h-[52px]">
+              {selectedFile ? (
+                <div className="flex items-center gap-3 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-md bg-indigo-500/15 shrink-0">
+                    <File className="w-4 h-4 text-indigo-400" />
+                  </div>
+                  <p className="text-sm text-slate-200 truncate">{selectedFile.name}</p>
+                </div>
+              ) : (
+                <p className="text-sm text-slate-500 px-1">No file selected</p>
+              )}
+            </div>
+
+            <button
+              disabled={loading || !selectedFile}
+              onClick={handleUpload}
+              className={`mt-4 w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 ${loading || !selectedFile
+                ? "bg-white/5 text-slate-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-500 hover:to-violet-500 shadow-lg shadow-indigo-900/30 active:scale-[0.98]"
+                }`}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                "Upload"
+              )}
+            </button>
+          </div>
+
         </div>
 
       </div>

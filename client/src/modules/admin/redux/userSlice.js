@@ -234,3 +234,36 @@ export const deleteProjectById = (id) => async (dispatch) => {
         dispatch(setLoading(false));
     }
 };
+
+
+export const uploadTaskSubmission = async (taskId, file) => {
+  try {
+    const formData = new FormData();
+
+    formData.append("file", file);
+
+    const { data } = await axiosInstance.patch(
+      `/employee/tasks/${taskId}/upload`,
+      formData,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (data.success) {
+        toast("succes")
+    }
+
+    return data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        success: false,
+        message: error.message,
+      }
+    );
+  }
+};
