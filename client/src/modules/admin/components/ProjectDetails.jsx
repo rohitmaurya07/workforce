@@ -261,12 +261,15 @@ const ProjectDetail = () => {
   const { project, user } = useSelector((state) => state.user);
   const { employees } = useSelector((state) => state.admin);
   const isAdmin = user?.role === "admin";
-
+  let calProgress = 0;
   const totalTasks = project?.tasks?.length || 0;
   const completedTasks = project?.tasks?.filter(
         (task) => task.status === "completed"
       ).length;
-  const calProgress = Math.round((completedTasks / totalTasks) * 100);
+
+      if (totalTasks !== 0) {
+            calProgress = Math.round((completedTasks / totalTasks) * 100); 
+      }
 
   useEffect(() => {
     dispatch(getProjectById(id));
@@ -320,7 +323,7 @@ const ProjectDetail = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-6 sm:px-6 lg:px-8 pb-24 md:pb-8">
+    <div className="min-h-screen  ml-18 bg-slate-950 px-4 py-6 sm:px-6 lg:px-8 pb-24 md:pb-8">
       <div className="max-w-5xl mx-auto space-y-5">
 
         {/* ── Back ── */}

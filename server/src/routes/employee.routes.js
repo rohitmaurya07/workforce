@@ -17,9 +17,9 @@ const router = express.Router();
 
 router.use(auth);
 
-// router.use(
-//   allowRoles("employee")
-// );
+router.use(
+  allowRoles("employee")
+);
 
 router.get(
   "/dashboard",

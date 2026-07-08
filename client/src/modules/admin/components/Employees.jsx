@@ -41,7 +41,7 @@ const Employees = () => {
   
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen ml-58 bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* Header */}
@@ -172,7 +172,13 @@ const Employees = () => {
                         View
                       </Link>
                       <button
-                        onClick={() => handleDelete(emp._id)}
+                        // onClick={() => handleDelete(emp._id)}
+                        className="text-xs text-green-400 hover:text-green-300 font-medium px-2.5 py-1.5 rounded-lg hover:bg-green-500/10 transition"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        // onClick={() => handleDelete(emp._id)}
                         className="text-xs text-rose-400 hover:text-rose-300 font-medium px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10 transition"
                       >
                         Delete

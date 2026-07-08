@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addEmployee } from "../redux/adminSlice";
 
 const DEPARTMENTS = ["Development", "Design", "Testing", "Marketing", "HR", "Sales"];
 
 const AddEmployeeModal = ({ onClose }) => {
   const dispatch = useDispatch();
-
+const {user }= useSelector((state=>state.auth))
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     department: "",
+    company: user.company._id,
   });
+
 
   const [showPassword, setShowPassword] = useState(false);
 

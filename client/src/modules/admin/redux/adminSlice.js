@@ -118,7 +118,6 @@ export const getAllUsers = () => async (dispatch) => {
     dispatch(setLoading(true));
     try {
         const response = await axiosInstance.get("/admin/users");
-console.log(response)
         if (response.data.success) {
             dispatch(setEmployees(response.data.users))
             
@@ -306,7 +305,6 @@ export const addMembersToProject = async (projectId, members) => {
 
 export const removeMembersFromProject = async (projectId, memberId) => {
   try {
-    console.log(projectId,memberId)
     const { data } = await axiosInstance.put(
       `/admin/projects/${projectId}/members/delete`,
       { members : [memberId] },
@@ -330,7 +328,6 @@ export const removeMembersFromProject = async (projectId, memberId) => {
 };
 export const deleteUserById = async (userId) => {
   try {
-    console.log(userId)
     const { data } = await axiosInstance.delete(`/admin/${userId}`,);
     if (data.success) {
       toast(`You Deleted ${data.user.name} Permanently`)
@@ -352,8 +349,31 @@ export const deleteUserById = async (userId) => {
 // 
 export const toogleAccountStatus = async (userId) => {
   try {
-    console.log(userId)
     const { data } = await axiosInstance.patch(`/admin/${userId}`,);
+    if (data.success) {
+      toast(data.message)
+    }
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        success: false,
+        message: error.message,
+      }
+    );
+  }
+  // toast(error.response?.data)
+};
+
+
+// Update Company Details
+export const updateCompanyInfo = async (formData) => {
+  try {
+        for (const [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+
+    const { data } = await axiosInstance.patch(`/company`,formData);
+    console.log(data)
     if (data.success) {
       toast(data.message)
     }

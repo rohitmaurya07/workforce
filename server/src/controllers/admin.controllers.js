@@ -12,6 +12,7 @@ export const addEmployee = async (req, res) => {
       email,
       password,
       department,
+      company,
     } = req.body;
 
     // Check required fields
@@ -40,6 +41,7 @@ export const addEmployee = async (req, res) => {
       name,
       email,
       department,
+      company,
       password: hashedPassword,
       role: "employee",
       isActive: true,
@@ -61,7 +63,6 @@ export const addEmployee = async (req, res) => {
     });
   }
 };
-
 
 // Get User details by Id
 export const getUserById = async (req, res) => {
@@ -132,7 +133,6 @@ export const deleteUserById = async (req,res)=>{
     console.log("error Came : ",error)
   }
 }
-
 
 // Toggle Account Status of a Employee
 export const toggleEmployeeAccountStatus = async (req, res) => {

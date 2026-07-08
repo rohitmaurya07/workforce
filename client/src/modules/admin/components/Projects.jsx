@@ -101,7 +101,7 @@ const Projects = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
+    <div style={{ backgroundColor: user.company.primaryColor }} className="min-h-screen ml-58  px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* ── Header ── */}
@@ -143,8 +143,8 @@ const Projects = () => {
                         {p.description}
                       </p>
                       {
-                        user._id !== p.createdBy._id ? (<p className="text-xs text-slate-300 mt-1 line-clamp-2 leading-relaxed">
-                        Created By : {p.createdBy.name} </p>)
+                        user?._id !== p?.createdBy?._id ? (<p className="text-xs text-slate-300 mt-1 line-clamp-2 leading-relaxed">
+                        Created By : {p?.createdBy?.name} </p>)
                         :
                         (<p className="text-xs border-2 w-23 rounded-2xl p-1 text-slate-300 mt-1 line-clamp-2 leading-relaxed">
                         Created By You

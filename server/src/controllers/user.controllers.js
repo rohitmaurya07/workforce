@@ -135,18 +135,17 @@ console.log(req.file.mimetype);
       unique_filename: true,
     });
 
-    console.log(result.resource_type);
-console.log(result.format);
-console.log(result.secure_url);
-
-
-
+    
+    const username = await User.findById(req.user._id).select("name");
+    console.log("Checking...",req.user,username)
+    
     task.attachments.push({
       fileName: req.file.originalname,
       fileUrl: result.secure_url,
       publicId: result.public_id,
       mimeType: req.file.mimetype,
       size: req.file.size,
+      uploadedBy: username,
       uploadedAt: new Date(),
     });
 

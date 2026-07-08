@@ -14,6 +14,7 @@ import Projects from "../modules/admin/components/Projects";
 import Dashboard from "../modules/admin/components/Dashboard";
 import Employees from "../modules/admin/components/Employees";
 import UserDetail from "../modules/admin/components/UserDetails";
+import EmployeeProfileSettings from "../modules/admin/components/Settings";
 
 export const router = createBrowserRouter([
   // Public Routes
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
         {
             path: "tasks",
             element: <Tasks />,
+        },
+        {
+            path: "settings",
+            element: <EmployeeProfileSettings />,
         },
         {
             path: "task/:id",

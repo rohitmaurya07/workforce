@@ -100,7 +100,7 @@ export const getUserDashboard = () => async (dispatch) => {
         }
     } catch (error) {
         const message = error.response?.data?.message || "Failed to fetch Profile";
-        toast(message)
+        // toast(message)
         dispatch(setError(message));
     } finally {
         dispatch(setLoading(false));
@@ -258,6 +258,26 @@ export const uploadTaskSubmission = async (taskId, file) => {
     }
 
     return data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        success: false,
+        message: error.message,
+      }
+    );
+  }
+};
+
+
+// Profile Update
+export const profileUpdate = async (formData) => {
+  try {
+    console.log("Frontedn : ",formData)
+    const { data } = await axiosInstance.patch(`/auth/update`, formData);
+    if (data.success) {
+        toast(data.message)
+        return data;
+    }
   } catch (error) {
     throw (
       error.response?.data || {

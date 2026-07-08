@@ -10,24 +10,32 @@ const navItems = [
   { label: "Users",     path: "/employees", icon: <Users size={18} /> },
   { label: "Tasks",     path: "/tasks",     icon: <SquareCheckBig size={18} /> },
   { label: "Projects",  path: "/projects",  icon: <FolderKanban size={18} /> },
+  { label: "Settings",  path: "/settings",  icon: <FolderKanban size={18} /> },
 ];
 
 /* ── Desktop Sidebar ─────────────────────────────────────────── */
 function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
-  const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees");
+    const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees" );
 
   return (
     <aside
+      style={{ backgroundColor: user.company.secondaryColor }}
       className={`${
         collapsed ? "w-16" : "w-60"
-      } hidden md:flex flex-col bg-slate-900 min-h-screen flex-shrink-0 transition-all duration-200`}
+      } hidden fixed  md:flex flex-col  min-h-screen flex-shrink-0 transition-all duration-200`}
     >
       {/* Logo */}
       <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800">
         {!collapsed && (
+          <>
           <span className="text-white font-bold text-base tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            WorkForce
+            {user.company.name} 
           </span>
+          <br />
+          <p className="bg-white rounded-2xl p-1">
+            {user.role}
+          </p>
+          </>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
@@ -41,19 +49,26 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
       <nav className="flex-1 py-4 space-y-0.5 px-2">
         {filtered.map((item) => (
           <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
-                isActive
-                  ? "bg-indigo-600 text-white font-medium shadow-lg shadow-indigo-600/20"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
-              } ${collapsed ? "justify-center" : ""}`
-            }
-          >
-            <span className="flex-shrink-0">{item.icon}</span>
-            {!collapsed && <span>{item.label}</span>}
-          </NavLink>
+  key={item.path}
+  to={item.path}
+  style={({ isActive }) => ({
+    backgroundColor: isActive
+      ? user?.company?.primaryColor
+      : undefined,
+  })}
+  className={({ isActive }) =>
+    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all
+    ${
+      isActive
+        ? "text-white font-medium shadow-lg"
+        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+    }
+    ${collapsed ? "justify-center" : ""}`
+  }
+>
+  <span className="flex-shrink-0">{item.icon}</span>
+  {!collapsed && <span>{item.label}</span>}
+</NavLink>
         ))}
       </nav>
 
@@ -77,7 +92,8 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
 
 /* ── Mobile Drawer ───────────────────────────────────────────── */
 function MobileDrawer({ open, onClose, user, isAdmin }) {
-  const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees");
+    const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees"  );
+
 
   return (
     <>

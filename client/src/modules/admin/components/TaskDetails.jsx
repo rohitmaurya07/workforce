@@ -106,7 +106,7 @@ const formatDate = (date) =>
 const safeFiles = task.attachments || [];
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen ml-18 bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-4">
 
         {/* ── Back + Breadcrumb ── */}

@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { getAdminDashboard } from '../redux/adminSlice'
 import { getUserDashboard, getProfile } from '../redux/userSlice'
 
-const StatCard = ({ label, value, icon }) => (
-  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-3">
+const StatCard = ({ label, value, icon, user }) => (
+  <div style={{ backgroundColor: user?.company.secondaryColor }} className=" border border-slate-800 rounded-2xl p-5 flex flex-col gap-3">
     <div className="flex items-center justify-between">
       <p className="text-xs text-slate-500 font-medium">{label}</p>
       <span className="text-slate-600 text-base">{icon}</span>
@@ -50,7 +50,7 @@ const Dashboard = () => {
   const dash = (pct / 100) * circumference
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
+    <div style={{ backgroundColor: user?.company?.primaryColor }} className="min-h-screen ml-38 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
 
         {/* Header */}
@@ -63,9 +63,9 @@ const Dashboard = () => {
         </div>
 
         {/* Stat cards */}
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
+        <div  className="grid grid-cols-2 xl:grid-cols-4 gap-4">
           {stats.map(s => (
-            <StatCard key={s.label} {...s} />
+            <StatCard user={user} key={s.label} {...s} />
           ))}
         </div>
 
@@ -73,7 +73,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
           {/* Completion ring */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center gap-3">
+          <div style={{ backgroundColor: user?.company.secondaryColor }} className=" border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center gap-3">
             <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">Task Completion</p>
             <div className="relative w-24 h-24">
               <svg className="w-24 h-24 -rotate-90" viewBox="0 0 80 80">
@@ -106,7 +106,7 @@ const Dashboard = () => {
           </div>
 
           {/* Status breakdown */}
-          <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
+          <div style={{ backgroundColor: user?.company?.secondaryColor }} className="lg:col-span-2 border border-slate-800 rounded-2xl p-6 flex flex-col gap-4">
             <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">Status Breakdown</p>
             <div className="flex flex-col gap-3">
               {[

@@ -9,9 +9,9 @@ import projectRoutes from "./src/routes/project.routes.js";
 import taskRoutes from "./src/routes/task.routes.js";
 import employeeRoutes from "./src/routes/employee.routes.js";
 import messageRoutes from "./src/routes/message.routes.js";
+import companyRoutes from "./src/routes/company.routes.js";
 
 const app = express()
-
 
 app.use(cors({
   origin: process.env.FRONTEND_URL,
@@ -20,21 +20,16 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-
-// process.env.CLOUDINARY_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET,
-
-// console.log(process.env.CLOUDINARY_API_KEY)
-
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use("/api/admin", adminRoutes);
 app.use("/api/employee", employeeRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/company", companyRoutes);
 
 export default app

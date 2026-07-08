@@ -2,6 +2,7 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
+import cloudinary from "../middlewares/cloudinary.js";
 
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID
@@ -234,7 +235,7 @@ export const getMyProfile = async (req,res) => {
       message: "User Not Logged in",
     });
 
-    const user = await User.findById(req.user.id).select("-__v");
+    const user = await User.findById(req.user.id).populate("company").select("-__v");
 
     res.status(200).json({
       success: true,
@@ -244,6 +245,76 @@ export const getMyProfile = async (req,res) => {
     res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+};
+
+
+export const updateProfile = async (req, res) => {
+  try {
+   const userId = req.user.id;
+   const updates = {};
+    console.log(req.body)
+    const allowedFields = [
+      "name",
+      "phone",
+      "designation",
+      "department",
+      "reportingManager",
+      "employmentType",
+      "workMode",
+      "dob",
+      "gender",
+      "address",
+      "bio",
+      "skills",
+      "avatar",
+      "emergencyContact",
+    ];
+
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+     // Avatar uploaded?
+    if (req.file) {
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    folder: "employee-profile",
+  });
+
+  updates.avatar = result.secure_url;
+}
+console.log(updates.avatar)
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updates },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong",
     });
   }
 };

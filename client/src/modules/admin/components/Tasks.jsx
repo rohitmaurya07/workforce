@@ -42,7 +42,7 @@ const Tasks = () => {
   }, {});
 
   return (
-    <div className="min-h-screen bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
+    <div style={{ backgroundColor: user.company.primaryColor }} className="min-h-screen ml-38 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
 
         {/* ── Header ── */}
@@ -75,7 +75,7 @@ const Tasks = () => {
             { label: "Review",      count: tasks.filter(t => t.status === "review").length,   color: "text-violet-400" },
             { label: "Done",        count: tasks.filter(t => t.status === "completed").length,     color: "text-emerald-400" },
           ].map(({ label, count, color }) => (
-            <div key={label} className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3">
+            <div style={{ backgroundColor: user.company.secondaryColor }} key={label} className=" border border-slate-800 rounded-xl px-4 py-3">
               <p className={`text-xl font-semibold ${color}`}>{count}</p>
               <p className="text-xs text-slate-500 mt-0.5">{label}</p>
             </div>
@@ -86,6 +86,7 @@ const Tasks = () => {
         <div className="flex gap-2 flex-wrap">
           {statuses.map(s => (
             <button
+            
               key={s}
               onClick={() => setFilter(s)}
               className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
