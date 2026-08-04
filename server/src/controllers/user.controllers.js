@@ -6,7 +6,9 @@ import https from "https";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find()
+    const user = await User.findById(req.user.id)
+    const companyId = user.company.toString();
+    const users = await User.find({company: companyId})
       .select("-__v")
       .sort({ createdAt: -1 });
 

@@ -1,0 +1,25 @@
+.btn-primary {
+  background: var(--accent);
+}
+.bg-primary {
+  background: var(--accent);
+  
+}
+.bg-hover:hover {
+  background: gray;
+
+}
+.primary-border {
+  border: 1px solid var(--accent);
+}
+.primary-border-2 {
+  border: 2px solid var(--accent);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.border-accent {
+  border-color: var(--accent);
+}

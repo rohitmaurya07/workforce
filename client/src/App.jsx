@@ -2,17 +2,20 @@ import { RouterProvider } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { router } from "./routes/AppRoutes";
 import { useDispatch, useSelector } from "react-redux";
-import { getCurrentUser } from "./modules/authentication/redux/authSlice";
 import { useEffect } from "react";
-import { getMyProjects, getProfile, getUserDashboard } from "./modules/admin/redux/userSlice";
-import { getAdminDashboard, getAllProjects, getAllUsers } from "./modules/admin/redux/adminSlice";
 import { socket } from "./socket/socket";
+import "./App.css";
+import { getMyProjects, getProfile, getUserDashboard } from "./redux/userSlice";
+import { getCurrentUser } from "./redux/authSlice";
+import { getAdminDashboard, getAllProjects, getAllUsers } from "./redux/adminSlice";
+
 
 const App = () => {
   const dispatch = useDispatch();
   const { user, loading: authLoading } = useSelector((state) => state.auth);
+  const { user : nuser,  } = useSelector((state) => state.user);
   const isAdmin = user?.role === "admin";
-console.log(user)
+  console.log("In the App ",nuser)
 
 
 useEffect(() => {
@@ -46,6 +49,9 @@ useEffect(() => {
 
     }, []);
 
+useEffect(() => {
+ document.documentElement.style.setProperty("--accent", "#6366F1");
+}, [])
 
 
 

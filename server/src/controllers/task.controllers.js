@@ -7,11 +7,14 @@ export const createTask = async (
   res
 ) => {
   try {
+    const user = await User.findById(req.user.id)
+        const companyId = user.company.toString();
     const task =
       await Task.create({
         ...req.body,
         assignedBy:
           req.user.id,
+          company: companyId
       });
 
       // Add task id to project's tasks array
@@ -67,8 +70,10 @@ export const getAllTasks = async (
   res
 ) => {
   try {
+    const user = await User.findById(req.user.id)
+        const companyId = user.company.toString();
     const tasks =
-      await Task.find()
+      await Task.find({company: companyId})
         .populate(
           "assignedTo",
           "name email"

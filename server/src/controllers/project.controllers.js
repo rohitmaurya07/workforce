@@ -1,15 +1,20 @@
 import Project from "../models/Project.Model.js";
 import Task from "../models/Task.Model.js";
+import User from "../models/User.Model.js";
 
 export const createProject = async (
   req,
   res
 ) => {
-  try {
-    const project =
+  try {    
+    const user = await User.findById(req.user.id)
+    const companyId = user.company.toString();
+    console.log("I want this : ",companyId);
+    
       await Project.create({
         ...req.body,
         createdBy: req.user.id,
+        company: companyId
       });
 
     res.status(201).json({
@@ -26,7 +31,9 @@ export const createProject = async (
 
 export const getProjects = async (req, res) => {
   try {
-    const projects = await Project.find()
+    const user = await User.findById(req.user.id)
+    const companyId = user.company.toString();
+    const projects = await Project.find({company: companyId})
       .populate("createdBy", "name email")
       .populate("tasks", "status");
 

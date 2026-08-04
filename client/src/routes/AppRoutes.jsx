@@ -4,17 +4,17 @@ import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
 
 // import AdminHome from "../modules/admin/AdminHome";
-import LoginPanel from "../modules/authentication/Login";
-import TaskDetail from "../modules/admin/components/TaskDetails";
-import ProjectDetail from "../modules/admin/components/ProjectDetails";
+import LoginPanel from "../components/Login";
+import TaskDetail from "../components/TaskDetails";
+import ProjectDetail from "../components/ProjectDetails";
 
 import ProtectedRoute from "../guards/ProtectedRoute"
-import Tasks from "../modules/admin/components/Tasks";
-import Projects from "../modules/admin/components/Projects";
-import Dashboard from "../modules/admin/components/Dashboard";
-import Employees from "../modules/admin/components/Employees";
-import UserDetail from "../modules/admin/components/UserDetails";
-import EmployeeProfileSettings from "../modules/admin/components/Settings";
+import Tasks from "../components/Tasks";
+import Projects from "../components/Projects";
+import Dashboard from "../components/Dashboard";
+import Employees from "../components/Employees";
+import UserDetail from "../components/UserDetails";
+import EmployeeProfileSettings from "../components/Settings";
 
 export const router = createBrowserRouter([
   // Public Routes

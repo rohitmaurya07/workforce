@@ -5,18 +5,22 @@ import User from "../models/User.model.js";
 export const getDashboardStats =
   async (req, res) => {
     try {
+      const user = await User.findById(req.user.id)
+          const companyId = user.company.toString();
 
       const totalUsers =
-        await User.countDocuments();
+      await User.find({company: companyId}).countDocuments();
+
 
       const totalProjects =
-        await Project.countDocuments();
+        await Project.find({company: companyId}).countDocuments();
 
       const totalTasks =
-        await Task.countDocuments();
+        await Task.find({company: companyId}).countDocuments();
+
 
       const completedTasks =
-        await Task.countDocuments({
+        await Task.find({company: companyId}).countDocuments({
           status: "completed",
         });
 

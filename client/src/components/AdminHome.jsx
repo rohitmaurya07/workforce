@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAdminDashboard } from "./redux/adminSlice";
-import { getProfile } from "./redux/userSlice";
 import { FolderKanban, LayoutDashboard, SquareCheckBig, Users, Menu, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
 
@@ -15,11 +13,13 @@ const navItems = [
 
 /* ── Desktop Sidebar ─────────────────────────────────────────── */
 function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
+  console.log("Side bar : ",user);
+  
     const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees" );
 
   return (
     <aside
-      style={{ backgroundColor: user.company.secondaryColor }}
+      
       className={`${
         collapsed ? "w-16" : "w-60"
       } hidden fixed  md:flex flex-col  min-h-screen flex-shrink-0 transition-all duration-200`}
@@ -28,12 +28,12 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
       <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800">
         {!collapsed && (
           <>
-          <span className="text-white font-bold text-base tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            {user.company.name} 
+          <span className="text-accent primary-border p-2 rounded-2xl font-bold text-base tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            {user?.company?.name} 
           </span>
           <br />
           <p className="bg-white rounded-2xl p-1">
-            {user.role}
+            {user?.role === "admin" ? "Admin": "Employee"}
           </p>
           </>
         )}
@@ -45,6 +45,8 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
         </button>
       </div>
 
+      {/* style={{ backgroundColor: "var(--accent)" || user?.company?.secondaryColor }} */}
+
       {/* Nav */}
       <nav className="flex-1 py-4 space-y-0.5 px-2">
         {filtered.map((item) => (
@@ -53,7 +55,7 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
   to={item.path}
   style={({ isActive }) => ({
     backgroundColor: isActive
-      ? user?.company?.primaryColor
+      ? "var(--accent)" ||  user?.company?.primaryColor
       : undefined,
   })}
   className={({ isActive }) =>
@@ -61,7 +63,7 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
     ${
       isActive
         ? "text-white font-medium shadow-lg"
-        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+        : "text-slate-400 hover:bg-gray-500 hover:text-white"
     }
     ${collapsed ? "justify-center" : ""}`
   }
@@ -73,14 +75,14 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
       </nav>
 
       {/* User */}
-      <div className="p-3 border-t border-slate-800">
+      <div className="p-3 border-t ">
         <div className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}>
-          <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+          <div className="w-8  h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
             {user?.name?.slice(0, 2).toUpperCase() || "RA"}
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <p className="text-white text-xs font-medium truncate">{user?.name}</p>
+              <p className=" text-xs font-medium truncate">{user?.name}</p>
               <p className="text-slate-500 text-xs truncate">{user?.email}</p>
             </div>
           )}
@@ -194,16 +196,12 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.user);
+  // const { user } = useSelector((state) => state.auth);
+  console.log("App bb bar : ",user);
+
   const isAdmin = user?.role === "admin";
 
-  useEffect(() => {
-    if (!isAdmin) dispatch(getProfile());
-  }, [dispatch, isAdmin]);
-
-  useEffect(() => {
-    dispatch(getAdminDashboard());
-  }, []);
 
   return (
     <div className="flex min-h-screen bg-slate-950 font-sans">

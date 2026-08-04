@@ -36,7 +36,7 @@ const Avatar = ({ name, size = "sm" }) => {
   const sz = size === "xs" ? "w-6 h-6 text-[10px]" : "w-8 h-8 text-xs";
   return (
     <div
-      className={`${sz} rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-semibold text-white flex-shrink-0`}
+      className={`${sz} rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center font-semibold  flex-shrink-0`}
     >
       {initials}
     </div>
@@ -101,13 +101,13 @@ const Projects = () => {
   };
 
   return (
-    <div style={{ backgroundColor: user.company.primaryColor }} className="min-h-screen ml-58  px-4 py-6 sm:px-6 lg:px-8">
+    <div  className="min-h-screen ml-58  px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Projects</h1>
+            <h1 className="text-2xl font-bold  tracking-tight">Projects</h1>
             <p className="text-slate-500 text-sm mt-1">
               {projects?.length ?? 0} total · {activeCount} active
             </p>
@@ -115,7 +115,7 @@ const Projects = () => {
           {isAdmin && (
             <button
               onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-all duration-150 shadow-lg shadow-indigo-600/20 self-start sm:self-auto flex-shrink-0"
+              className="inline-flex items-center text-white gap-2 bg-primary hover:bg-indigo-500 active:bg-indigo-700  text-sm font-medium px-4 py-2.5 rounded-xl transition-all duration-150 shadow-lg shadow-indigo-600/20 self-start sm:self-auto flex-shrink-0"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -131,15 +131,15 @@ const Projects = () => {
             const sc = statusConfig[p.status] ?? statusConfig.PLANNING;
             return (
               <Link to={`/project/${p._id}`} key={p._id}>
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-200 group h-full flex flex-col">
+                <div className="bg-primary border  rounded-2xl p-5 transition-all duration-200 group h-full flex flex-col">
 
                   {/* Card Header */}
                   <div className="flex items-start justify-between gap-3 mb-4">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-semibold text-white truncate group-hover:text-indigo-300 transition-colors">
+                      <h3 className="text-sm font-semibold text-white  truncate transition-colors">
                         {p.name}
                       </h3>
-                      <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-slate-300 mt-1 line-clamp-2 leading-relaxed">
                         {p.description}
                       </p>
                       {
@@ -153,7 +153,7 @@ const Projects = () => {
                       }
                     </div>
                     <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ${sc.badge}`}
+                      className={`inline-flex text-white items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ${sc.badge}`}
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
                       <span className="hidden xs:inline">{p.status}</span>
@@ -164,10 +164,10 @@ const Projects = () => {
                   {/* Progress */}
                   <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs text-slate-500">Progress</span>
+                      <span className="text-xs text-slate-100">Progress</span>
                       <span className="text-xs font-semibold text-slate-300">{p.progress}%</span>
                     </div>
-                    <div className="bg-slate-800 rounded-full h-1.5">
+                    <div className="bg-slate-200 rounded-full h-1.5">
                       <div
                         className={`h-1.5 rounded-full transition-all duration-500 ${progressColor(p.progress ?? 0)}`}
                         style={{ width: `${p.progress ?? 0}%` }}
@@ -192,9 +192,9 @@ const Projects = () => {
                     ].map(({ label, value }) => (
                       <div
                         key={label}
-                        className="bg-slate-800/60 border border-slate-800 rounded-xl p-2.5 sm:p-3 text-center"
+                        className="bg-white text-accent rounded-xl p-2.5 sm:p-3 text-center"
                       >
-                        <p className="text-sm font-semibold text-white truncate">{value}</p>
+                        <p className="text-sm font-semibold  truncate">{value}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{label}</p>
                       </div>
                     ))}
@@ -220,7 +220,7 @@ const Projects = () => {
               {isAdmin && (
                 <button
                   onClick={() => setShowModal(true)}
-                  className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
+                  className="inline-flex  items-center gap-2 bg-indigo-600 hover:bg-indigo-500  text-sm font-medium px-4 py-2 rounded-xl transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -246,7 +246,7 @@ const Projects = () => {
               {/* Modal Header */}
               <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-slate-800 flex-shrink-0">
                 <div>
-                  <h2 className="text-base font-semibold text-white">Create Project</h2>
+                  <h2 className="text-base font-semibold ">Create Project</h2>
                   <p className="text-xs text-slate-500 mt-0.5">Fill in the details to get started</p>
                 </div>
                 <button
@@ -382,7 +382,7 @@ const Projects = () => {
                 <button
                   onClick={handleCreateProject}
                   disabled={!formData.name.trim()}
-                  className="flex-1 sm:flex-none px-5 py-2.5 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl transition-colors"
+                  className="flex-1 sm:flex-none px-5 py-2.5 text-sm font-medium bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed  rounded-xl transition-colors"
                 >
                   Create Project
                 </button>

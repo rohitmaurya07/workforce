@@ -6,7 +6,7 @@ import { createCompany, deleteCompany, getCompany, updateCompany } from "../cont
 import { upload } from "../middlewares/multer.js";
 const router = Router();
 
-router.post("/", auth, allowRoles("admin"), createCompany);
+router.post("/", createCompany);
 router.get("/", auth, getCompany);
 router.patch("/", auth, allowRoles("admin"), upload.single("logo"), updateCompany);
 router.delete("/", auth, allowRoles("admin"), deleteCompany);

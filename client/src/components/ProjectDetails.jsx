@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { deleteProjectById, getProjectById } from "../redux/userSlice";
 import { PlusCircle, X } from "lucide-react";
-import { addMembersToProject, removeMembersFromProject } from "../redux/adminSlice";
 import Chat from "./Chat";
+import { deleteProjectById, getProjectById } from "../redux/userSlice";
+import { addMembersToProject } from "../redux/adminSlice";
 
 // ── Design tokens ────────────────────────────────────────────────────────────
 

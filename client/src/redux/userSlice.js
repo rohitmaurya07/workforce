@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../../../api/axios";
+import axiosInstance from "../api/axios";
 import toast from "react-hot-toast";
 
 const initialState = {
@@ -80,6 +80,8 @@ export const getProfile = () => async (dispatch) => {
         const response = await axiosInstance.get("/auth/profile");
         if (response.data.success) {
             dispatch(setUser(response.data.user))
+            console.log("In the Slice : ",response.data.user);
+            
         }
        
     } catch (error) {

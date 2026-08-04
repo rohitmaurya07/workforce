@@ -1,30 +1,110 @@
+import mongoose from "mongoose";
+import cloudinary from "../middlewares/cloudinary.js";
 import Company from "../models/Company.Model.js";
 import User from "../models/User.Model.js";
+import bcrypt from "bcrypt";
 
 
 
 // Creating a Company
 export const createCompany = async (req, res) => {
   try {
-    console.log(req.body)
-    const company = await Company.create({
-      ...req.body,
-      owner: req.user.id,
+    const {
+      loginName,
+      loginEmail,
+      loginPassword,
+      name,
+      legalName,
+      website,
+      email,
+      phone,
+      logo,
+      industry,
+      companySize,
+      foundedYear,
+      currency,
+      timezone,
+    } = req.body;
+
+    if (!loginName || !loginEmail || !loginPassword || !name) {
+      return res.status(400).json({
+        success: false,
+        message: "Required fields are missing",
+      });
+    }
+
+    const ownerEmail = loginEmail.trim().toLowerCase();
+    const companyEmail = email?.trim().toLowerCase();
+
+    const existingUser = await User.findOne({ email: ownerEmail });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+
+    const existingCompany = await Company.findOne({
+      email: companyEmail,
     });
 
-     await User.findByIdAndUpdate(
-      req.user.id,
-      {
+    if (existingCompany) {
+      return res.status(409).json({
+        success: false,
+        message: "Company already exists",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(loginPassword, 10);
+
+    let company = null;
+    let user = null;
+
+    try {
+      company = await Company.create({
+        name,
+        legalName,
+        website,
+        email: companyEmail,
+        phone,
+        logo,
+        industry,
+        companySize,
+        foundedYear,
+        currency,
+        timezone,
+      });
+
+      user = await User.create({
+        name: loginName,
+        email: ownerEmail,
+        password: hashedPassword,
         company: company._id,
-      },
-      { new: true }
-    );
+        role: "admin",
+      });
 
-    return res.status(201).json({
-      success: true,
-      message: "Company created successfully",
-      company,
-    });
+      company.owner = user._id;
+      await company.save();
+
+      return res.status(201).json({
+        success: true,
+        message: "Company created successfully",
+        company,
+      });
+
+    } catch (err) {
+      if (user) {
+        await User.findByIdAndDelete(user._id);
+      }
+
+      if (company) {
+        await Company.findByIdAndDelete(company._id);
+      }
+
+      throw err;
+    }
+
   } catch (err) {
     console.error(err);
 
@@ -34,6 +114,7 @@ export const createCompany = async (req, res) => {
     });
   }
 };
+
 
 // Get Company Details
 export const getCompany = async (req, res) => {
@@ -97,12 +178,12 @@ export const updateCompany = async (req, res) => {
       }
     });
 
-     // Avatar uploaded?
-        if (req.file) {
+    // Avatar uploaded?
+    if (req.file) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: "company-logo",
       });
-    
+
       updates.logo = result.secure_url;
     }
     const company = await Company.findOneAndUpdate(

@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit"
-import axiosInstance from "../../../api/axios.js"
+import axiosInstance from "../api/axios.js"
 import toast, { Toaster } from 'react-hot-toast';
 import { Navigate } from "react-router-dom";
 
@@ -45,6 +45,7 @@ export const googleLogin =
       }
 
     } catch (error) {
+      toast(error.response?.data?.message)
       dispatch(
         setError(
           error.response?.data?.message ||
@@ -122,11 +123,12 @@ export const login =
 export const logout =
   () => async (dispatch) => {
     try {
-      await axiosInstance.post(
+      await axiosInstance.get(
         "/auth/logout"
       );
 
       dispatch(logoutUser());
+      
     } catch (error) {
       dispatch(
         setError(

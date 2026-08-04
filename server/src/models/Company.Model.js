@@ -29,6 +29,7 @@ const companySchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
+    
 
     phone: {
       type: String,
@@ -115,7 +116,7 @@ const companySchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      default: null,
     },
 
     isActive: {

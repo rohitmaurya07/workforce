@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../../../api/axios";
+import axiosInstance from "../api/axios";
 import toast from "react-hot-toast";
 
 const initialState = {
@@ -75,6 +75,28 @@ export const {
     addProject
   } = adminSlice.actions;
 export default adminSlice.reducer;
+
+export const setUpCompany = (data) => async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      console.log(data);
+      
+        const response = await axiosInstance.post("/company",data);
+console.log(response);
+
+        if (response.data.success) {
+          toast(response.data.message)
+            // dispatch(setDashboardInfo(response.data.stats))
+          }
+      
+    } catch (error) {
+        const message = error.response?.data?.message || "Failed to fetch rides";
+        toast(message)
+        dispatch(setError(message));
+    } finally {
+        dispatch(setLoading(false));
+    }
+};
 
 export const getAdminDashboard = () => async (dispatch) => {
     dispatch(setLoading(true));

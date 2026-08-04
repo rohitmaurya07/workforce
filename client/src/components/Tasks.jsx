@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { priorityBadge, statusBadge } from '../data';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllTasks } from '../redux/adminSlice';
 import AddTaskModal from './AddTaskModal';
@@ -42,19 +41,19 @@ const Tasks = () => {
   }, {});
 
   return (
-    <div style={{ backgroundColor: user.company.primaryColor }} className="min-h-screen ml-38 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
+    <div  className="min-h-screen ml-38 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
 
         {/* ── Header ── */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-medium text-indigo-400 uppercase tracking-widest mb-1">Workspace</p>
-            <h1 className="text-2xl font-semibold text-white">Tasks</h1>
+            <p className="text-xs font-medium text-accent   uppercase tracking-widest mb-1">Workspace</p>
+            <h1 className="text-2xl font-semibold ">Tasks</h1>
           </div>
           {isAdmin && (
             <button
               onClick={() => setNewTask(true)}
-              className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-center"
+              className="inline-flex bg-primary text-white items-center gap-2   text-sm font-medium px-4 py-2 rounded-lg transition-colors w-full sm:w-auto justify-center"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -70,12 +69,12 @@ const Tasks = () => {
         {/* ── Stats strip ── */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "Total",       count: tasks.length,                                      color: "text-slate-200" },
+            { label: "Total",       count: tasks.length,                                      color: "text-slate-600" },
             { label: "In Progress", count: tasks.filter(t => t.status === "in_progress").length, color: "text-blue-400" },
             { label: "Review",      count: tasks.filter(t => t.status === "review").length,   color: "text-violet-400" },
             { label: "Done",        count: tasks.filter(t => t.status === "completed").length,     color: "text-emerald-400" },
           ].map(({ label, count, color }) => (
-            <div style={{ backgroundColor: user.company.secondaryColor }} key={label} className=" border border-slate-800 rounded-xl px-4 py-3">
+            <div  key={label} className="border border-slate-800 rounded-xl px-4 py-3">
               <p className={`text-xl font-semibold ${color}`}>{count}</p>
               <p className="text-xs text-slate-500 mt-0.5">{label}</p>
             </div>
@@ -91,7 +90,7 @@ const Tasks = () => {
               onClick={() => setFilter(s)}
               className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${
                 filter === s
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-primary text-white"
                   : "bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-600"
               }`}
             >
@@ -119,7 +118,7 @@ const Tasks = () => {
               const { dot, bar } = statusMeta(t.status);
               return (
                 <Link to={`/task/${t._id}`} key={t._id} className="group block">
-                  <div className="relative bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4 h-full hover:border-slate-600 transition-colors overflow-hidden">
+                  <div className="relative bg-primary rounded-2xl p-5 flex flex-col gap-4 h-full hover:border-slate-600 transition-colors overflow-hidden">
 
                     {/* Top colored bar */}
                     <div className={`absolute top-0 left-0 right-0 h-0.5 ${bar} opacity-60`} />
@@ -128,16 +127,16 @@ const Tasks = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 ">
                         <div className={`w-2 h-2 rounded-full flex-shrink-0 ${dot}`} />
-                        <span className="text-xs text-gray-400">{t.status}</span>
+                        <span className="text-xs text-gray-100">{t.status}</span>
                       </div>
-                      <span className={`text-[11px] px-2 py-0.5 rounded-md font-medium ${priorityBadge(t.priority)}`}>
+                      <span className={`text-[11px] px-2 py-0.5 rounded-md font-medium  text-white border-1`}>
                         {t.priority}
                       </span>
                     </div>
 
                     {/* Title + project */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-100 group-hover:text-white leading-snug transition-colors line-clamp-2">
+                      <p className="text-sm font-semibold text-slate-100 group-hover: leading-snug transition-colors line-clamp-2">
                         {t.title}
                       </p>
                       {t.project && (

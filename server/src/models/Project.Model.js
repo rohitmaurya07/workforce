@@ -3,6 +3,11 @@ import { Schema } from "mongoose";
 
 const projectSchema = new Schema(
     {
+    company: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Company",
+          required: true,
+        },
     name: {
       type: String,
       required: true,

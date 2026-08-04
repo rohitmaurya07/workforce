@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { CircleUserRound, CircleUserRoundIcon, ShieldCheck, UserRound } from "lucide-react"
 import { useDispatch, useSelector } from "react-redux"
-import { googleLogin, login, register } from "./redux/authSlice";
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
-import { useNavigate } from "react-router-dom";
-
-
-
-
+import { Link, useNavigate } from "react-router-dom";
+import { login, register } from "../redux/authSlice";
+import CompanyWizard from "./CompanyWizard";
 
 
 
@@ -25,7 +22,7 @@ export default function LoginPanel() {
   const navigate = useNavigate()
     const { user } = useSelector((state) => state.auth);
     
-
+const [showCompanyWizard, setShowCompanyWizard] = useState(false);
   async function handleSubmit() {
     setError("");
     if (!email || !password) return setError("Please fill in all fields.");
@@ -81,6 +78,11 @@ export default function LoginPanel() {
       console.error(error);
     }
   };
+
+  if (showCompanyWizard) {
+    return <CompanyWizard/>
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4 relative overflow-hidden">
@@ -221,6 +223,13 @@ export default function LoginPanel() {
                 <button className="text-gray-400 hover:text-white transition-colors">Forgot password?</button>
               </p>
             )}
+            {tab === "login" && (
+              <p className="text-center text-xs text-gray-600">
+                <button onClick={()=>setShowCompanyWizard(!showCompanyWizard)} className="text-gray-400 hover:text-white transition-colors">Register your Company</button>
+              </p>
+            )}
+
+            
           </div>
         </div>
 

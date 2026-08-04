@@ -165,13 +165,20 @@ export const googleLogin = async (req, res) => {
     });
 
     if (!user) {
-      user = await User.create({
-        googleId: sub,
-        name,
-        email,
-        avatar: picture,
-      });
+      return res.status(400).json({
+        success: false,
+        message: "You are Not Registered Yet"
+      })
     }
+
+    // if (!user) {
+    //   user = await User.create({
+    //     googleId: sub,
+    //     name,
+    //     email,
+    //     avatar: picture,
+    //   });
+    // }
 
     user.lastLogin = new Date();
 
@@ -199,7 +206,7 @@ export const googleLogin = async (req, res) => {
       success: true,
 
       token,
-
+ 
       user: {
         id: user._id,
         name: user.name,

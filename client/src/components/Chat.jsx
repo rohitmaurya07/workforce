@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { socket } from "../../../socket/socket";
-import axiosInstance from "../../../api/axios";
+import { socket } from "../socket/socket";
+import axiosInstance from "../api/axios";
 
 const Avatar = ({ name, size = "md" }) => {
   const initials =

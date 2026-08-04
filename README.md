@@ -86,7 +86,7 @@ The Employee Task Management System is a full-stack MERN application that helps 
 
 ### File Storage
 
-* Cloudinary *(or your preferred storage service)*
+* Cloudinary 
 
 ### Deployment
 
