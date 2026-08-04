@@ -90,8 +90,8 @@ The Employee Task Management System is a full-stack MERN application that helps 
 
 ### Deployment
 
-* Frontend: Netlify
-* Backend: Render
+* Frontend: Railway
+* Backend: Railway
 
 ---
 
