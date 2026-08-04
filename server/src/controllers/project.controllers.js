@@ -1,6 +1,6 @@
 import Project from "../models/Project.Model.js";
 import Task from "../models/Task.Model.js";
-import User from "../models/User.Model.js";
+import User from "../models/User.model.js";
 
 export const createProject = async (
   req,
