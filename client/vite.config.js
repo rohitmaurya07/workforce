@@ -9,7 +9,8 @@ export default defineConfig({
     host: "0.0.0.0",
     port: process.env.PORT,
     allowedHosts: [
-      "calm-sparkle-production-3504.up.railway.app"
+      "calm-sparkle-production-3504.up.railway.app",
+      "workkforce.up.railway.app
     ]
   }
 })
