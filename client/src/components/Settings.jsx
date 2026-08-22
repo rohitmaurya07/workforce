@@ -1004,7 +1004,7 @@ export default function EmployeeProfileSettings() {
 
   return (
     <div className={``}>
-      <div className="ml-60 bg-slate-50 dark:bg-slate-950 text-slate-200 dark:text-slate-100 font-sans transition-colors duration-300">
+      <div className="md:ml-60 pb-16 md:pb-5 bg-slate-50 dark:bg-slate-950 text-slate-200 dark:text-slate-100 font-sans transition-colors duration-300">
         <div className="flex  ">
           <Sidebar active={active} user={user} setActive={setActive} dark={dark} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux"
 import axios from "axios";
 import { GoogleLogin } from "@react-oauth/google";
 import { Link, useNavigate } from "react-router-dom";
-import { login, register } from "../redux/authSlice";
+import { googleLogin, login, register } from "../redux/authSlice";
 import CompanyWizard from "./CompanyWizard";
 
 

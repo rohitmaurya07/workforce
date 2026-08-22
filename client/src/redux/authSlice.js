@@ -43,6 +43,7 @@ export const googleLogin =
         dispatch(setUser(data.user));
         return true;
       }
+      toast(data?.message)
 
     } catch (error) {
       toast(error.response?.data?.message)

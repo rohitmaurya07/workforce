@@ -70,6 +70,7 @@ const Projects = () => {
   const [formData, setFormData] = useState(defaultForm);
 
   const dispatch = useDispatch();
+  
   const { user } = useSelector((state) => state.user);
   const { employees: users, projects: allProjects } = useSelector((state) => state.admin);
   const { myProjects } = useSelector((state) => state.user);
@@ -101,7 +102,7 @@ const Projects = () => {
   };
 
   return (
-    <div  className="min-h-screen ml-58  px-4 py-6 sm:px-6 lg:px-8">
+    <div  className="min-h-screen pb-24 md:pb-5 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* ── Header ── */}

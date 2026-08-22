@@ -11,7 +11,7 @@ const navItems = [
   { label: "Settings",  path: "/settings",  icon: <FolderKanban size={18} /> },
 ];
 
-/* ── Desktop Sidebar ─────────────────────────────────────────── */
+// Desktop Sidebar
 function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
   console.log("Side bar : ",user);
   
@@ -22,7 +22,7 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
       
       className={`${
         collapsed ? "w-16" : "w-60"
-      } hidden fixed  md:flex flex-col  min-h-screen flex-shrink-0 transition-all duration-200`}
+      } hidden fixed bg-gray-900  md:flex flex-col  min-h-screen flex-shrink-0 transition-all duration-200`}
     >
       {/* Logo */}
       <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800">
@@ -92,7 +92,7 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
   );
 }
 
-/* ── Mobile Drawer ───────────────────────────────────────────── */
+//  Mobile Drawer 
 function MobileDrawer({ open, onClose, user, isAdmin }) {
     const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees"  );
 
@@ -158,7 +158,7 @@ function MobileDrawer({ open, onClose, user, isAdmin }) {
   );
 }
 
-/* ── Mobile Bottom Tab Bar ───────────────────────────────────── */
+//  Mobile Bottom Tab Bar 
 function BottomNav({ isAdmin }) {
   const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees");
 
@@ -190,7 +190,7 @@ function BottomNav({ isAdmin }) {
   );
 }
 
-/* ── Root App ────────────────────────────────────────────────── */
+//  Root App 
 export default function App() {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -221,16 +221,7 @@ export default function App() {
         isAdmin={isAdmin}
       />
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top header */}
-     
-
-        {/* Page content */}
-        <main className="flex-1 overflow-auto pb-20 md:pb-0">
-          {/* <Outlet /> */}
-        </main>
-      </div>
+    
 
       {/* Mobile bottom tab bar */}
       <BottomNav isAdmin={isAdmin} />

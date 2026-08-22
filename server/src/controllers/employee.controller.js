@@ -3,10 +3,7 @@ import Task from "../models/Task.Model.js";
 import {Comment} from "../models/Comment.model.js";
 
 
-export const getMyTasks = async (
-  req,
-  res
-) => {
+export const getMyTasks = async (req, res) => {
   try {
     const tasks = await Task.find({assignedTo: req.user.id,})
       .populate(
@@ -23,6 +20,7 @@ export const getMyTasks = async (
 
     res.status(200).json({
       success: true,
+      message: "Task fetched",
       count: tasks.length,
       tasks,
     });

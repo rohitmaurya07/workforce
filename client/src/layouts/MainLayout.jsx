@@ -6,9 +6,7 @@ export default function MainLayout() {
     <div className="flex min-h-screen">
       <Sidebar />
 
-      <main className="flex-1">
-        {/* <Header /> */}
-
+      <main className="w-full">
         <div className="">
           <Outlet />
         </div>

@@ -25,9 +25,9 @@ const CompanyWizard = () => {
         companySize: '1-10',
         currency: 'USD',
         timezone: 'UTC-11:00',
-        loginName: 'Rohit MK',
-        loginEmail: 'rohitmk@gmail.com',
-        loginPassword: 'rohit',
+        loginName: '',
+        loginEmail: '',
+        loginPassword: '',
     });
 
     const [errors, setErrors] = useState({});

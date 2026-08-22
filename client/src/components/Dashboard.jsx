@@ -50,7 +50,7 @@ const Dashboard = () => {
   const dash = (pct / 100) * circumference
 
   return (
-    <div className="min-h-screen ml-38 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen pb-24 md:pb-5 md:ml-38 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
 
         {/* Header */}
