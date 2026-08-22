@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.model.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../middlewares/cloudinary.js";
-
+// Updated
 const client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID
 );
