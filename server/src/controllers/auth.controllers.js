@@ -1,6 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
-import User from "../models/User.model.js";
+import User from "../models/User.Model.js";
 import bcrypt from "bcryptjs";
 import cloudinary from "../middlewares/cloudinary.js";
 // Updated
