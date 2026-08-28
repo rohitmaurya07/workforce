@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+:root {
+  --app-font: 'Inter', sans-serif;
+}
+
+*, ::before, ::after, html, body, button, input, select, textarea, p, h1, h2, h3, h4, h5, h6, span, div, label, td, th {
+  font-family: var(--app-font) !important;
+}

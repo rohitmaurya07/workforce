@@ -3,15 +3,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAllTasks } from '../redux/adminSlice';
 import AddTaskModal from './AddTaskModal';
 import { getMyTasks, getProfile } from '../redux/userSlice';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 const statusMeta = (status) => {
   switch (status) {
-    case "completed":        return { dot: "bg-emerald-400", bar: "bg-emerald-400" };
+    case "completed":   return { dot: "bg-emerald-400", bar: "bg-emerald-400" };
     case "in_progress": return { dot: "bg-blue-400",    bar: "bg-blue-400" };
-    case "review":      return { dot: "bg-violet-400",  bar: "bg-violet-400" };
+    case "todo":        return { dot: "bg-amber-400",   bar: "bg-amber-400" };
     default:            return { dot: "bg-slate-600",   bar: "bg-slate-600" };
   }
+};
+
+const filterMap = {
+  "All": "All",
+  "Todo": "todo",
+  "In Progress": "in_progress",
+  "Done": "completed",
 };
 
 const Tasks = () => {
@@ -20,12 +27,14 @@ const Tasks = () => {
   const statuses = ["All", "Todo", "In Progress", "Done"];
   const [newTask, setNewTask] = useState(false);
 
-  const { user } = useSelector((state) => state.user);
+  const { user: userAuth } = useSelector((state) => state.auth);
+  const { user: userSlice } = useSelector((state) => state.user);
+  const user = userSlice || userAuth;
   const isAdmin = user?.role === "admin";
 
   const { tasks: adminTasks } = useSelector((state) => state.admin);
   const { tasks: userTasks }  = useSelector((state) => state.user);
-  const tasks = isAdmin ? adminTasks : userTasks;
+  const tasks = (isAdmin ? adminTasks : userTasks) || [];
 
   useEffect(() => {
     dispatch(getProfile());
@@ -33,15 +42,20 @@ const Tasks = () => {
     else dispatch(getMyTasks());
   }, [dispatch, isAdmin]);
 
-  const filtered = filter === "All" ? tasks : tasks.filter(t => t.status === filter);
+  const matchesFilter = (tStatus, f) => {
+    if (f === "All") return true;
+    return tStatus === filterMap[f];
+  };
+
+  const filtered = tasks.filter(t => matchesFilter(t.status, filter));
 
   const statusCounts = statuses.reduce((acc, s) => {
-    acc[s] = s === "All" ? tasks.length : tasks.filter(t => t.status === s).length;
+    acc[s] = s === "All" ? tasks.length : tasks.filter(t => matchesFilter(t.status, s)).length;
     return acc;
   }, {});
 
   return (
-    <div  className="min-h-screen pb-24 md:pb-5 md:ml-38 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen pb-24 md:pb-5 md:ml-60 px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-6">
 
         {/* ── Header ── */}
@@ -106,60 +120,62 @@ const Tasks = () => {
 
         {/* ── Card Grid ── */}
         {filtered.length === 0 ? (
-          <div className="text-center py-20 text-slate-600">
-            <svg className="w-9 h-9 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+          <div className="text-center py-20 bg-slate-900/50 border border-slate-800 rounded-2xl">
+            <svg className="w-10 h-10 mx-auto mb-3 text-slate-600" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            <p className="text-sm">No tasks here</p>
+            <p className="text-sm font-semibold text-slate-300">No tasks found</p>
+            <p className="text-xs text-slate-500 mt-1">There are no tasks matching "{filter}"</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(t => {
               const { dot, bar } = statusMeta(t.status);
+              const priorityBg =
+                t.priority === "high"
+                  ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
+                  : t.priority === "medium"
+                  ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                  : "bg-slate-500/10 text-slate-400 border-slate-500/20";
+
               return (
                 <Link to={`/task/${t._id}`} key={t._id} className="group block">
-                  <div className="relative bg-primary rounded-2xl p-5 flex flex-col gap-4 h-full hover:border-slate-600 transition-colors overflow-hidden">
+                  <div className="relative bg-slate-900 border border-slate-800 hover:border-indigo-500/40 rounded-2xl p-5 flex flex-col gap-4 h-full shadow-lg hover:shadow-indigo-500/5 transition-all duration-200 overflow-hidden">
+                    <div className={`absolute top-0 left-0 right-0 h-1 ${bar}`} />
 
-                    {/* Top colored bar */}
-                    <div className={`absolute top-0 left-0 right-0 h-0.5 ${bar} opacity-60`} />
-
-                    {/* Top row: status dot + priority badge */}
+                    {/* Status + Priority */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 ">
-                        <div className={`w-2 h-2 rounded-full flex-shrink-0 ${dot}`} />
-                        <span className="text-xs text-gray-100">{t.status}</span>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${dot}`} />
+                        <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                          {t.status === "in_progress" ? "In Progress" : t.status === "completed" ? "Completed" : "Todo"}
+                        </span>
                       </div>
-                      <span className={`text-[11px] px-2 py-0.5 rounded-md font-medium  text-white border-1`}>
-                        {t.priority}
+                      <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md border ${priorityBg}`}>
+                        {t.priority || "medium"}
                       </span>
                     </div>
 
-                    {/* Title + project */}
+                    {/* Title */}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-100 group-hover: leading-snug transition-colors line-clamp-2">
+                      <h3 className="text-sm font-semibold text-white group-hover:text-indigo-300 transition-colors line-clamp-2">
                         {t.title}
-                      </p>
-                      {t.project && (
-                        <p className="text-xs text-slate-500 mt-1 truncate">{t.project}</p>
+                      </h3>
+                      {t.description && (
+                        <p className="text-xs text-slate-400 mt-1 line-clamp-2">{t.description}</p>
                       )}
                     </div>
 
-                    {/* Footer: assignee + due */}
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-                      <div className="flex items-center gap-2 min-w-0">
-                        {/* Avatar placeholder */}
-                        <div className="px-2 h-6 rounded-full bg-indigo-600/30 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
-                          <span className="text-[9px] font-bold text-indigo-300 uppercase">
-                            {
-                              isAdmin ? <div>Assigned To : {t?.assignedTo?.name}</div> : <div>Assigned By : {t?.assignedBy?.name}</div> 
-                            }
-                          </span>
-                        </div>
-                        <span className="text-xs text-slate-400 truncate">{t.assignee}</span>
-                      </div>
-                      <span className="text-[11px] text-slate-600 flex-shrink-0 ml-2">
-                        {t.due}
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-800/80 text-xs">
+                      <span className="text-slate-400 font-medium truncate">
+                        {isAdmin ? `To: ${t?.assignedTo?.name || "Unassigned"}` : `By: ${t?.assignedBy?.name || "Admin"}`}
                       </span>
+                      {t.dueDate && (
+                        <span className="text-slate-500 text-[11px]">
+                          {new Date(t.dueDate).toLocaleDateString()}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </Link>

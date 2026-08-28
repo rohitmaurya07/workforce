@@ -12,78 +12,94 @@ const navItems = [
 ];
 
 // Desktop Sidebar
+// Desktop Sidebar
 function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
-  console.log("Side bar : ",user);
-  
-    const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees" );
+  const filtered = isAdmin ? navItems : navItems.filter((i) => i.path !== "/employees");
+  const companyName = user?.company?.name || "CampusNest";
+  const companyLogo = user?.company?.logo;
 
   return (
     <aside
-      
       className={`${
         collapsed ? "w-16" : "w-60"
-      } hidden fixed bg-gray-900  md:flex flex-col  min-h-screen flex-shrink-0 transition-all duration-200`}
+      } hidden fixed z-30 bg-slate-900 border-r border-slate-800 md:flex flex-col h-screen flex-shrink-0 transition-all duration-300 shadow-2xl select-none`}
     >
-      {/* Logo */}
-      <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800">
-        {!collapsed && (
-          <>
-          <span className="text-accent primary-border p-2 rounded-2xl font-bold text-base tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            {user?.company?.name} 
-          </span>
-          <br />
-          <p className="bg-white rounded-2xl p-1">
-            {user?.role === "admin" ? "Admin": "Employee"}
-          </p>
-          </>
+      {/* Logo / Header */}
+      <div className="flex items-center justify-between px-3.5 py-4 border-b border-slate-800/80">
+        {!collapsed ? (
+          <div className="flex items-center gap-3 min-w-0 pr-1">
+            <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700/80 flex items-center justify-center font-extrabold text-indigo-400 text-xs overflow-hidden flex-shrink-0 shadow-inner">
+              {companyLogo ? (
+                <img src={companyLogo} alt={companyName} className="w-full h-full object-cover" />
+              ) : (
+                companyName.slice(0, 2).toUpperCase()
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm font-extrabold tracking-tight text-white truncate">
+                {companyName}
+              </h2>
+              <span className="inline-block text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                {isAdmin ? "Admin Workspace" : "Employee View"}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-indigo-400 text-xs overflow-hidden shadow-md">
+            {companyLogo ? (
+              <img src={companyLogo} alt={companyName} className="w-full h-full object-cover" />
+            ) : (
+              companyName.slice(0, 2).toUpperCase()
+            )}
+          </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-slate-400 hover:text-white ml-auto p-1 rounded-lg hover:bg-slate-800 transition"
+          className="text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition"
+          aria-label="Toggle collapse"
         >
           {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
       </div>
 
-      {/* style={{ backgroundColor: "var(--accent)" || user?.company?.secondaryColor }} */}
-
-      {/* Nav */}
-      <nav className="flex-1 py-4 space-y-0.5 px-2">
+      {/* Nav Items */}
+      <nav className="flex-1 py-4 space-y-1 px-3 overflow-y-auto">
         {filtered.map((item) => (
           <NavLink
-  key={item.path}
-  to={item.path}
-  style={({ isActive }) => ({
-    backgroundColor: isActive
-      ? "var(--accent)" ||  user?.company?.primaryColor
-      : undefined,
-  })}
-  className={({ isActive }) =>
-    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all
-    ${
-      isActive
-        ? "text-white font-medium shadow-lg"
-        : "text-slate-400 hover:bg-gray-500 hover:text-white"
-    }
-    ${collapsed ? "justify-center" : ""}`
-  }
->
-  <span className="flex-shrink-0">{item.icon}</span>
-  {!collapsed && <span>{item.label}</span>}
-</NavLink>
+            key={item.path}
+            to={item.path}
+            end={item.path === "/admin"}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                isActive
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/25 ring-1 ring-indigo-400/30"
+                  : "text-slate-400 hover:bg-slate-800/70 hover:text-slate-200"
+              } ${collapsed ? "justify-center px-0" : ""}`
+            }
+          >
+            <span className="flex-shrink-0">{item.icon}</span>
+            {!collapsed && <span>{item.label}</span>}
+          </NavLink>
         ))}
       </nav>
 
-      {/* User */}
-      <div className="p-3 border-t ">
+      {/* User Footer */}
+      <div className="p-3 border-t border-slate-800/80 bg-slate-900/50">
         <div className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}>
-          <div className="w-8  h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-            {user?.name?.slice(0, 2).toUpperCase() || "RA"}
+          <div className="relative flex-shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold text-xs flex items-center justify-center shadow-md overflow-hidden">
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.slice(0, 2).toUpperCase() || "CN"
+              )}
+            </div>
+            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-slate-900" />
           </div>
           {!collapsed && (
-            <div className="overflow-hidden">
-              <p className=" text-xs font-medium truncate">{user?.name}</p>
-              <p className="text-slate-500 text-xs truncate">{user?.email}</p>
+            <div className="overflow-hidden min-w-0">
+              <p className="text-slate-200 text-xs font-semibold truncate">{user?.name || "User"}</p>
+              <p className="text-slate-500 text-[11px] truncate">{user?.email || ""}</p>
             </div>
           )}
         </div>
@@ -92,10 +108,11 @@ function Sidebar({ collapsed, setCollapsed, user, isAdmin }) {
   );
 }
 
-//  Mobile Drawer 
+// Mobile Drawer 
 function MobileDrawer({ open, onClose, user, isAdmin }) {
-    const filtered = isAdmin ? navItems : navItems.filter(i => i.path !== "/employees"  );
-
+  const filtered = isAdmin ? navItems : navItems.filter((i) => i.path !== "/employees");
+  const companyName = user?.company?.name || "CampusNest";
+  const companyLogo = user?.company?.logo;
 
   return (
     <>
@@ -113,10 +130,19 @@ function MobileDrawer({ open, onClose, user, isAdmin }) {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-4 py-5 border-b border-slate-800">
-          <span className="text-white font-bold text-base bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            WorkForce
-          </span>
+        <div className="flex items-center justify-between px-4 py-4 border-b border-slate-800">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-indigo-400 text-xs overflow-hidden flex-shrink-0">
+              {companyLogo ? (
+                <img src={companyLogo} alt={companyName} className="w-full h-full object-cover" />
+              ) : (
+                companyName.slice(0, 2).toUpperCase()
+              )}
+            </div>
+            <span className="text-white font-bold text-sm truncate">
+              {companyName}
+            </span>
+          </div>
           <button onClick={onClose} className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
             <X size={18} />
           </button>
@@ -195,13 +221,11 @@ export default function App() {
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
-  // const { user } = useSelector((state) => state.auth);
-  console.log("App bb bar : ",user);
+  const { user: userAuth } = useSelector((state) => state.auth);
+  const { user: userSlice } = useSelector((state) => state.user);
+  const user = userSlice || userAuth;
 
   const isAdmin = user?.role === "admin";
-
 
   return (
     <div className="flex min-h-screen bg-slate-950 font-sans">
@@ -220,8 +244,6 @@ export default function App() {
         user={user}
         isAdmin={isAdmin}
       />
-
-    
 
       {/* Mobile bottom tab bar */}
       <BottomNav isAdmin={isAdmin} />

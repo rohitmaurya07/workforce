@@ -323,13 +323,13 @@ const ProjectDetail = () => {
     : null;
 
   return (
-    <div className="min-h-screen  ml-18 bg-slate-950 px-4 py-6 sm:px-6 lg:px-8 pb-24 md:pb-8">
-      <div className="max-w-5xl mx-auto space-y-5">
+    <div className="min-h-screen pb-24 md:pb-6 md:ml-60 px-4 py-6 sm:px-6 lg:px-8 bg-slate-950 font-sans text-slate-100">
+      <div className="max-w-6xl mx-auto space-y-6">
 
         {/* ── Back ── */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -338,17 +338,17 @@ const ProjectDetail = () => {
         </button>
 
         {/* ── Hero Header ── */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl">
           {/* Top row: status badge + delete */}
           <div className="flex items-center justify-between gap-3 mb-3">
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${sc.badge}`}>
+            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${sc.badge}`}>
               <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
               {project.status}
             </span>
             {isAdmin && (
               <button
                 onClick={handleDeleteProject}
-                className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 px-3 py-1.5 rounded-xl transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 px-3.5 py-1.5 rounded-xl transition-all"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
@@ -358,12 +358,12 @@ const ProjectDetail = () => {
             )}
           </div>
 
-          <h1 className="text-lg sm:text-xl font-semibold text-white">{project.name}</h1>
-          <p className="text-slate-400 text-sm mt-2 leading-relaxed">{project.description}</p>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-white">{project.name}</h1>
+          <p className="text-slate-300 text-sm mt-2 leading-relaxed">{project.description}</p>
 
           {/* Date range */}
-          <div className="flex items-center gap-2 mt-3 text-xs text-slate-500">
-            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <div className="flex items-center gap-2 mt-4 text-xs text-slate-400">
+            <svg className="w-4 h-4 flex-shrink-0 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25" />
             </svg>
             <span className="truncate">
@@ -375,13 +375,13 @@ const ProjectDetail = () => {
 
           {/* Progress */}
           <div className="mt-5">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-xs text-slate-500">Overall Progress</span>
-              <span className="text-xs font-semibold text-slate-300">{calProgress }%</span>
+            <div className="flex justify-between items-center mb-1.5">
+              <span className="text-xs font-semibold text-slate-400">Overall Progress</span>
+              <span className="text-xs font-bold text-indigo-400">{calProgress}%</span>
             </div>
-            <div className="bg-slate-800 rounded-full h-2">
+            <div className="bg-slate-950 border border-slate-800 rounded-full h-2 overflow-hidden">
               <div
-                className={`h-2 rounded-full transition-all duration-700 ${progressColor(project.progress)}`}
+                className={`h-full rounded-full transition-all duration-700 ${progressColor(project.progress)}`}
                 style={{ width: `${calProgress}%` }}
               />
             </div>
@@ -407,26 +407,26 @@ const ProjectDetail = () => {
         </div>
 
         {/* ── Tabs ── */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
 
-          {/* Tab bar — scrollable on mobile */}
+          {/* Tab bar */}
           <div className="flex border-b border-slate-800 px-4 sm:px-6 pt-1 overflow-x-auto scrollbar-hide">
             {TABS.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`relative flex-shrink-0 flex items-center gap-1.5 px-1 py-4 mr-5 sm:mr-6 text-sm font-medium transition-colors ${
-                  activeTab === tab ? "text-white" : "text-slate-500 hover:text-slate-300"
+                className={`relative flex-shrink-0 flex items-center gap-1.5 px-1 py-4 mr-5 sm:mr-6 text-sm font-semibold transition-colors ${
+                  activeTab === tab ? "text-indigo-400" : "text-slate-400 hover:text-slate-200"
                 }`}
               >
                 {tab}
                 {tab === "Tasks" && (
-                  <span className="text-xs bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-full">
+                  <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700 font-bold">
                     {tasksTotal}
                   </span>
                 )}
                 {tab === "Members" && (
-                  <span className="text-xs bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-full">
+                  <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700 font-bold">
                     {project.members?.length ?? 0}
                   </span>
                 )}
@@ -452,14 +452,14 @@ const ProjectDetail = () => {
                       { label: "To Do", count: project.tasks?.filter((t) => t.status === "todo").length ?? 0, color: "bg-slate-600", text: "text-slate-400" },
                     ].map(({ label, count, color, text }) => (
                       <div key={label} className="flex items-center gap-3">
-                        <span className="text-xs text-slate-500 w-20 sm:w-24 flex-shrink-0">{label}</span>
-                        <div className="flex-1 bg-slate-800 rounded-full h-1.5">
+                        <span className="text-xs text-slate-400 w-20 sm:w-24 flex-shrink-0 font-medium">{label}</span>
+                        <div className="flex-1 bg-slate-950 border border-slate-800 rounded-full h-2 overflow-hidden">
                           <div
-                            className={`h-1.5 rounded-full ${color}`}
+                            className={`h-full rounded-full ${color}`}
                             style={{ width: tasksTotal ? `${(count / tasksTotal) * 100}%` : "0%" }}
                           />
                         </div>
-                        <span className={`text-xs font-semibold w-4 text-right ${text}`}>{count}</span>
+                        <span className={`text-xs font-bold w-4 text-right ${text}`}>{count}</span>
                       </div>
                     ))}
                   </div>
@@ -468,19 +468,19 @@ const ProjectDetail = () => {
                 <div className="border-t border-slate-800" />
 
                 <div>
-                  <SectionLabel>Team</SectionLabel>
+                  <SectionLabel>Team Members</SectionLabel>
                   <div className="flex items-center gap-2 flex-wrap">
                     {project.members?.slice(0, 6).map((m) => {
                       const member = m.userId ?? m;
                       return (
-                        <div key={member._id} className="flex items-center gap-2 bg-slate-800 border border-slate-700 rounded-full pl-1 pr-3 py-1">
+                        <div key={member._id} className="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-full pl-1 pr-3 py-1">
                           <Avatar name={member.name} size="xs" />
-                          <span className="text-xs text-slate-300">{member.name}</span>
+                          <span className="text-xs text-slate-300 font-medium">{member.name}</span>
                         </div>
                       );
                     })}
                     {(project.members?.length ?? 0) > 6 && (
-                      <span className="text-xs text-slate-500 bg-slate-800 border border-slate-700 rounded-full px-3 py-1">
+                      <span className="text-xs text-slate-400 bg-slate-950 border border-slate-800 rounded-full px-3 py-1 font-semibold">
                         +{project.members.length - 6} more
                       </span>
                     )}
@@ -496,9 +496,9 @@ const ProjectDetail = () => {
                       { label: "Start Date", value: project.startDate },
                       { label: "End Date", value: project.endDate },
                     ].map(({ label, value }) => (
-                      <div key={label} className="bg-slate-800/40 border border-slate-800 rounded-xl px-4 py-3 flex flex-col gap-1">
+                      <div key={label} className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 flex flex-col gap-1">
                         <span className="text-xs text-slate-500">{label}</span>
-                        <span className="text-sm font-medium text-slate-200">
+                        <span className="text-sm font-semibold text-slate-200">
                           {new Date(value).toLocaleDateString("en-US", {
                             weekday: "short",
                             month: "long",
@@ -523,20 +523,20 @@ const ProjectDetail = () => {
                   <div className="flex justify-end">
                     <button
                       onClick={() => setShowAddMember(true)}
-                      className="inline-flex items-center gap-2 text-sm font-medium text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 px-4 py-2 rounded-xl transition-colors"
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 border border-indigo-500/20 px-4 py-2 rounded-xl transition-all shadow-lg shadow-indigo-600/20"
                     >
-                      <PlusCircle size={15} />
+                      <PlusCircle size={16} />
                       Add Member
                     </button>
                   </div>
                 )}
-                <TabMembers handleRemoveMembers={handleRemoveMembers}  members={project.members} />
+                <TabMembers handleRemoveMembers={handleRemoveMembers} members={project.members} />
               </div>
             )}
           </div>
         </div>
 
-        <Chat/>3
+        <Chat />
       </div>
 
       {/* ── Add Member Modal ── */}

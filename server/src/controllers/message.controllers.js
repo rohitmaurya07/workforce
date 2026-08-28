@@ -18,19 +18,25 @@ console.log(messages)
 export const postMessage = async (req, res) => {
   try {
     const { projectId } = req.params;
-    const { content } = req.body;
-    const userId = req.user._id; // assumes auth middleware sets req.user
+    const { content, text } = req.body;
+    const userId = req.user.id || req.user._id;
+    const messageText = content || text;
 
-    if (!content?.trim()) {
-      return res.status(400).json({ message: "Comment cannot be empty" });
+    if (!messageText?.trim()) {
+      return res.status(400).json({ message: "Message content cannot be empty" });
     }
 
-    const message = await Message.create({ projectId, userId, content });
-    const populated = await message.populate('userId', 'name');
+    const message = await Message.create({
+      project: projectId,
+      sender: userId,
+      text: messageText.trim(),
+    });
 
-    res.status(201).json({ message: populated });
+    const populated = await Message.findById(message._id).populate('sender', 'name avatar');
+
+    res.status(201).json({ message: populated, success: true });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Failed to post message" });
+    res.status(500).json({ message: "Failed to post message", success: false });
   }
 };

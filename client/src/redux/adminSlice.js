@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axios";
 import toast from "react-hot-toast";
+import { setUser } from "./authSlice";
 
 const initialState = {
   admin: null,
@@ -11,8 +12,6 @@ const initialState = {
   loading: false,
   error: null,
   dashboardInfo: {},
- 
-  
 };
 
 const adminSlice = createSlice({
@@ -79,20 +78,39 @@ export default adminSlice.reducer;
 export const setUpCompany = (data) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
-      console.log(data);
-      
-        const response = await axiosInstance.post("/company",data);
-console.log(response);
+        let payload = data;
+        let config = {};
+
+        if (data && (data.logo instanceof File || data.companyLogo instanceof File)) {
+            const formData = new FormData();
+            Object.keys(data).forEach((key) => {
+                if (data[key] !== null && data[key] !== undefined) {
+                    formData.append(key, data[key]);
+                }
+            });
+            payload = formData;
+            config = {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            };
+        }
+
+        const response = await axiosInstance.post("/company", payload, config);
 
         if (response.data.success) {
-          toast(response.data.message)
-            // dispatch(setDashboardInfo(response.data.stats))
+          toast.success(response.data.message || "Company created successfully!");
+          if (response.data.user) {
+            dispatch(setUser(response.data.user));
           }
-      
+          return true;
+        }
+        return false;
     } catch (error) {
-        const message = error.response?.data?.message || "Failed to fetch rides";
-        toast(message)
+        const message = error.response?.data?.message || "Failed to create company";
+        toast.error(message);
         dispatch(setError(message));
+        return false;
     } finally {
         dispatch(setLoading(false));
     }

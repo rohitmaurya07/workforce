@@ -105,10 +105,6 @@ export const getTaskDetails = async (
   res
 ) => {
   try {
-    // const task = await Task.findById(
-    //   req.params.id
-    // );
-
     const task = await Task.findById(req.params.id)
       .populate("assignedTo", "name email")
       .populate("assignedBy", "name email")
@@ -121,15 +117,17 @@ export const getTaskDetails = async (
       });
     }
 
- if (
-  !task.assignedTo._id.equals(req.user.id) &&
-  req.user.role !== "admin"
-) {
-  return res.status(403).json({
-    success: false,
-    message: "Access denied",
-  });
-}
+    const assignedId = task.assignedTo?._id?.toString() || task.assignedTo?.toString();
+    const isAssignee = assignedId === req.user.id.toString();
+    const isAssigner = task.assignedBy?._id?.toString() === req.user.id.toString();
+    const isAdmin = req.user.role === "admin";
+
+    if (!isAssignee && !isAssigner && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied",
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -158,9 +156,18 @@ export const deleteTask = async (req, res) => {
     }
 
     // Remove task id from project's tasks array
-    await ProjectModel.findByIdAndUpdate(task.project, {
-      $pull: { tasks: task._id },
-    });
+    if (task.projectId) {
+      await ProjectModel.findByIdAndUpdate(task.projectId, {
+        $pull: { tasks: task._id },
+      });
+    }
+
+    // Remove task id from assigned user's tasks array
+    if (task.assignedTo) {
+      await User.findByIdAndUpdate(task.assignedTo, {
+        $pull: { tasks: task._id },
+      });
+    }
 
     // Delete the task
     await Task.findByIdAndDelete(id);

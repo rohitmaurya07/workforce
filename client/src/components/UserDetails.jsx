@@ -383,7 +383,7 @@ const dispatch = useDispatch()
         .ud-divider { height: 1px; background: rgba(148,163,184,0.06); margin: 4px 0; }
       `}</style>
 
-      <div className="ud-page ml-58   ">
+      <div className="ud-page md:ml-60">
 
         {/* ── Topbar ── */}
         <div className="ud-topbar">

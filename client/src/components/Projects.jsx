@@ -102,7 +102,7 @@ const Projects = () => {
   };
 
   return (
-    <div  className="min-h-screen pb-24 md:pb-5 md:ml-58  px-4 py-6 sm:px-6 lg:px-8">
+    <div className="min-h-screen pb-24 md:pb-5 md:ml-60 px-4 py-6 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-6">
 
         {/* ── Header ── */}
@@ -143,15 +143,15 @@ const Projects = () => {
                       <p className="text-xs text-slate-300 mt-1 line-clamp-2 leading-relaxed">
                         {p.description}
                       </p>
-                      {
-                        user?._id !== p?.createdBy?._id ? (<p className="text-xs text-slate-300 mt-1 line-clamp-2 leading-relaxed">
-                        Created By : {p?.createdBy?.name} </p>)
-                        :
-                        (<p className="text-xs border-2 w-23 rounded-2xl p-1 text-slate-300 mt-1 line-clamp-2 leading-relaxed">
-                        Created By You
-                      </p>)
-                      
-                      }
+                      {user?._id !== p?.createdBy?._id ? (
+                        <p className="text-xs text-slate-400 mt-1 line-clamp-1">
+                          Created By: <span className="text-slate-300 font-medium">{p?.createdBy?.name || "Admin"}</span>
+                        </p>
+                      ) : (
+                        <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-full mt-1">
+                          Created By You
+                        </span>
+                      )}
                     </div>
                     <span
                       className={`inline-flex text-white items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0 ${sc.badge}`}
@@ -164,13 +164,13 @@ const Projects = () => {
 
                   {/* Progress */}
                   <div className="mb-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs text-slate-100">Progress</span>
-                      <span className="text-xs font-semibold text-slate-300">{p.progress}%</span>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs text-slate-400 font-medium">Progress</span>
+                      <span className="text-xs font-bold text-indigo-400">{p.progress}%</span>
                     </div>
-                    <div className="bg-slate-200 rounded-full h-1.5">
+                    <div className="bg-slate-950 border border-slate-800 rounded-full h-2 overflow-hidden">
                       <div
-                        className={`h-1.5 rounded-full transition-all duration-500 ${progressColor(p.progress ?? 0)}`}
+                        className={`h-full rounded-full transition-all duration-500 ${progressColor(p.progress ?? 0)}`}
                         style={{ width: `${p.progress ?? 0}%` }}
                       />
                     </div>
@@ -193,10 +193,10 @@ const Projects = () => {
                     ].map(({ label, value }) => (
                       <div
                         key={label}
-                        className="bg-white text-accent rounded-xl p-2.5 sm:p-3 text-center"
+                        className="bg-slate-950/80 border border-slate-800 rounded-xl p-2.5 text-center"
                       >
-                        <p className="text-sm font-semibold  truncate">{value}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{label}</p>
+                        <p className="text-xs font-bold text-white truncate">{value}</p>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">{label}</p>
                       </div>
                     ))}
                   </div>

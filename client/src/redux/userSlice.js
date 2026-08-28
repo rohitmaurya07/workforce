@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../api/axios";
 import toast from "react-hot-toast";
+import { setUser as setAuthUser } from "./authSlice";
 
 const initialState = {
   user: null,
@@ -272,20 +273,25 @@ export const uploadTaskSubmission = async (taskId, file) => {
 
 
 // Profile Update
-export const profileUpdate = async (formData) => {
+export const profileUpdate = (formData) => async (dispatch) => {
+  dispatch(setLoading(true));
   try {
-    console.log("Frontedn : ",formData)
-    const { data } = await axiosInstance.patch(`/auth/update`, formData);
+    const { data } = await axiosInstance.patch(`/auth/update`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     if (data.success) {
-        toast(data.message)
-        return data;
+      dispatch(setUser(data.user));
+      dispatch(setAuthUser(data.user));
+      toast.success(data.message || "Profile updated successfully!");
+      return data;
     }
   } catch (error) {
-    throw (
-      error.response?.data || {
-        success: false,
-        message: error.message,
-      }
-    );
+    const msg = error.response?.data?.message || "Failed to update profile";
+    toast.error(msg);
+    dispatch(setError(msg));
+  } finally {
+    dispatch(setLoading(false));
   }
 };

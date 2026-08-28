@@ -19,7 +19,7 @@ export const addEmployee = async (req, res) => {
     if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Name and email are required.",
+        message: "Name, email and password are required.",
       });
     }
 
@@ -34,6 +34,13 @@ export const addEmployee = async (req, res) => {
         message: "Employee already exists.",
       });
     }
+
+    let targetCompany = company;
+    if (!targetCompany) {
+      const adminUser = await User.findById(req.user.id);
+      targetCompany = adminUser?.company;
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create employee
@@ -41,7 +48,7 @@ export const addEmployee = async (req, res) => {
       name,
       email,
       department,
-      company,
+      company: targetCompany,
       password: hashedPassword,
       role: "employee",
       isActive: true,
@@ -59,7 +66,7 @@ export const addEmployee = async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Failed to add employee.",
+      message: error.message || "Failed to add employee.",
     });
   }
 };
@@ -79,26 +86,29 @@ export const getUserById = async (req, res) => {
 
     const user = await User.findById(id)
       .select("-password -refreshToken")
-      .populate("tasks", "title description priority status dueDate")
-      const stats = {
-        totalTasks: user.tasks.length,
-      completedTasks: user.tasks.filter(
-        (task) => task.status === "completed"
-      ).length,
-      pendingTasks: user.tasks.filter(
-        (task) => task.status === "pending"
-      ).length,
-      inProgressTasks: user.tasks.filter(
-        (task) => task.status === "in-progress"
-      ).length,
-    };
-    const performance = stats.completedTasks / stats.totalTasks * 100;
+      .populate("tasks", "title description priority status dueDate");
+
     if (!user) {
       return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
+
+    const tasksList = user.tasks || [];
+    const stats = {
+      totalTasks: tasksList.length,
+      completedTasks: tasksList.filter(
+        (task) => task.status === "completed"
+      ).length,
+      pendingTasks: tasksList.filter(
+        (task) => task.status === "todo" || task.status === "pending"
+      ).length,
+      inProgressTasks: tasksList.filter(
+        (task) => task.status === "in_progress" || task.status === "in-progress"
+      ).length,
+    };
+    const performance = stats.totalTasks > 0 ? Math.round((stats.completedTasks / stats.totalTasks) * 100) : 0;
 
     res.status(200).json({
       success: true,

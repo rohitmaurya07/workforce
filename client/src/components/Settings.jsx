@@ -8,7 +8,7 @@ import {
   Zap, BrainCircuit, FileText, ScrollText, ShieldCheck, ExternalLink, Edit3,
   Plus, Circle,
   SaveAll,
-  School,
+  School, Type,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import { useEffect } from "react";
 import { profileUpdate } from "../redux/userSlice";
 import { updateCompanyInfo } from "../redux/adminSlice";
 import { logout } from "../redux/authSlice";
+import { useTheme } from "../context/ThemeContext";
 
 const navItems = [
   { key: "company", label: "Company", icon: School },
@@ -37,24 +38,24 @@ const accentColors = [
 
 function Card({ title, description, icon: Icon, action, children, className = "" }) {
   return (
-    <div className={`rounded-2xl border bg-primary shadow-sm hover:shadow-md dark:shadow-none transition-shadow duration-300 ${className}`}>
+    <div className={`rounded-2xl border border-slate-800 bg-slate-900 shadow-xl transition-shadow duration-300 ${className}`}>
       {(title || action) && (
-        <div className="flex items-start justify-between gap-4 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-slate-100 dark:border-white/5">
+        <div className="flex items-start justify-between gap-4 px-5 sm:px-6 pt-5 sm:pt-6 pb-4 border-b border-slate-800">
           <div className="flex items-start gap-3 min-w-0">
             {Icon && (
-              <span className="mt-0.5 text-white inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-100/10 ">
-                <Icon className="h-4.5 w-4.5" size={18} />
+              <span className="mt-0.5 text-indigo-400 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/20">
+                <Icon size={18} />
               </span>
             )}
             <div className="min-w-0">
-              <h3 className="text-[15px] font-semibold text-slate-200 dark:text-white truncate">{title}</h3>
-              {description && <p className="text-xs text-slate-200 dark:text-slate-100 mt-0.5">{description}</p>}
+              <h3 className="text-base font-bold text-white truncate">{title}</h3>
+              {description && <p className="text-xs text-slate-400 mt-0.5">{description}</p>}
             </div>
           </div>
           {action && <div className="shrink-0">{action}</div>}
         </div>
       )}
-      <div className="p-5 sm:p-6 text-white">{children}</div>
+      <div className="p-5 sm:p-6 text-slate-100">{children}</div>
     </div>
   );
 }
@@ -62,17 +63,17 @@ function Card({ title, description, icon: Icon, action, children, className = ""
 function Field({ label, icon: Icon, value, name, onChange, type = "text", disabled, className = "" }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-200 dark:text-slate-100">
-        {Icon && <Icon size={13} className="opacity-70" />}
+      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-300">
+        {Icon && <Icon size={13} className="text-indigo-400 opacity-80" />}
         {label}
       </span>
       <input
         type={type}
         name={name}
-        value={value}
+        value={value ?? ""}
         onChange={onChange}
         disabled={disabled}
-        className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/60 px-3.5 py-2.5 text-sm text-slate-100 dark:text-slate-100 placeholder-slate-400 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3.5 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
       />
     </label>
   );
@@ -153,35 +154,39 @@ function Chip({ children }) {
   );
 }
 
-function Select({ label, options, value, name, onChange, icon: Icon }) {
+function Select({ label, options = [], value, name, onChange, icon: Icon }) {
   return (
     <label className="block">
-      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-slate-100 dark:text-slate-200">
-        {Icon && <Icon size={13} className="opacity-70" />}
+      <span className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-300">
+        {Icon && <Icon size={13} className="text-indigo-400 opacity-80" />}
         {label}
       </span>
       <div className="relative">
-        <select className="w-full appearance-none rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/60 px-3.5 py-2.5 pr-9 text-sm text-slate-200 dark:text-slate-100 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10">
+        <select
           name={name}
           value={value}
           onChange={onChange}
+          className="w-full appearance-none rounded-xl border border-slate-800 bg-slate-950 px-3.5 py-2.5 pr-9 text-sm text-slate-100 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+        >
           {options.map((o) => (
-            <option key={o}>{o}</option>
+            <option key={o} value={o} className="bg-slate-900 text-slate-100">
+              {o}
+            </option>
           ))}
         </select>
-        <ChevronDown size={15} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-200" />
+        <ChevronDown size={15} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
       </div>
     </label>
   );
 }
 
 function Button({ children, variant = "primary", icon: Icon, className = "", ...props }) {
-  const base = "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-indigo-500/30 active:scale-[0.98]";
+  const base = "inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none active:scale-[0.98]";
   const variants = {
-    primary: " text-white shadow-sm shadow-indigo-500/30 hover:shadow-md hover:shadow-indigo-500/40",
-    secondary: "bg-slate-100 dark:bg-white/5 text-slate-100 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-white/10",
-    danger: "bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20",
-    ghost: "text-slate-100 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5",
+    primary: "bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20",
+    secondary: "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700",
+    danger: "bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20",
+    ghost: "text-slate-400 hover:text-white hover:bg-slate-800/60",
   };
   return (
     <button className={`${base} ${variants[variant]} ${className}`} {...props}>
@@ -193,39 +198,52 @@ function Button({ children, variant = "primary", icon: Icon, className = "", ...
 
 // Profile Section
 function ProfileSection(user) {
-  const emp = user.user
-  const [isChanged, setisChanged] = useState(false)
+  const emp = user.user || {};
+  const [isChanged, setIsChanged] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState(emp.avatar);
   const [avatarFile, setAvatarFile] = useState(null);
   const fileInputRef = useRef(null);
-  const dispatch = useDispatch()
-  const [form, setform] = useState({
-    "name": emp.name || "",
-    "email": emp.email,
-    "phone": emp.phone || "",
-    "dob": emp.dob || "",
-    "gender": emp.gender || "",
-    "address": emp.address || "",
-    "emergencyContact": emp.emergencyContact || "",
-  })
+  const dispatch = useDispatch();
+
+  const [form, setForm] = useState({
+    name: emp.name || "",
+    email: emp.email || "",
+    phone: emp.phone || "",
+    dob: emp.dob || "",
+    gender: emp.gender || "",
+    address: emp.address || "",
+    emergencyContact: emp.emergencyContact || "",
+  });
+
+  useEffect(() => {
+    if (emp) {
+      setAvatar(emp.avatar);
+      setForm({
+        name: emp.name || "",
+        email: emp.email || "",
+        phone: emp.phone || "",
+        dob: emp.dob || "",
+        gender: emp.gender || "",
+        address: emp.address || "",
+        emergencyContact: emp.emergencyContact || "",
+      });
+    }
+  }, [emp]);
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-
-    setform((prev) => ({
+    setForm((prev) => ({
       ...prev,
       [name]: value,
     }));
-
-    setisChanged(true);
+    setIsChanged(true);
   };
 
-
-  // Handle Form Update
-  const handleFormUpdate = () => {
-    console.log(form)
+  // Handle Form & Avatar Update
+  const handleFormUpdate = async () => {
+    setLoading(true);
     const data = new FormData();
-
     data.append("name", form.name);
     data.append("phone", form.phone);
     data.append("dob", form.dob);
@@ -236,59 +254,69 @@ function ProfileSection(user) {
     if (avatarFile) {
       data.append("avatar", avatarFile);
     }
-    dispatch(profileUpdate(data))
-    setisChanged(false)
-  }
 
-
-  const handleChangeAvatar = async (e) => {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    // Validate image
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image.");
-      return;
+    const res = await dispatch(profileUpdate(data));
+    setLoading(false);
+    if (res?.success) {
+      setIsChanged(false);
+      setAvatarFile(null);
     }
-
-    if (file.size > 4 * 1024 * 1024) {
-      alert("Image size should be less than 4MB.");
-      return;
-    }
-
-    // Local preview
-    const preview = URL.createObjectURL(file);
-    setAvatar(preview);
-    setisChanged(true)
-
-    setAvatarFile(file);                  // Save actual file
-    setisChanged(true);
   };
 
+  const handleChangeAvatar = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file.");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size must be less than 5MB.");
+      return;
+    }
+
+    const preview = URL.createObjectURL(file);
+    setAvatar(preview);
+    setAvatarFile(file);
+    setIsChanged(true);
+  };
 
   return (
     <div className="space-y-6">
       <Card
-        title="Personal Information"
-        description="Your basic contact and identity details"
+        title="Personal Profile Information"
+        description="Update your avatar photo, contact details, and account profile"
         icon={UserCircle2}
-        action={isChanged ? (<Button onClick={handleFormUpdate} className="bg-blue-700 text-white" icon={SaveAll} >Save Changes</Button>) : (<Button icon={Edit3} variant="secondary">Edit Profile</Button>)}
+        action={
+          isChanged ? (
+            <Button onClick={handleFormUpdate} disabled={loading} className="bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/20" icon={SaveAll}>
+              {loading ? "Saving Profile..." : "Save Changes"}
+            </Button>
+          ) : (
+            <Button icon={Edit3} variant="secondary">
+              Profile Ready
+            </Button>
+          )
+        }
       >
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex items-center gap-5 p-4 bg-slate-950/60 border border-slate-800/80 rounded-2xl">
           <div className="relative">
-            <div className="h-20 w-20 rounded-2xl flex items-center justify-center text-white text-2xl font-semibold shadow-lg shadow-indigo-500/20">
-              <img
-                className="h-full w-full rounded-2xl object-cover"
-                src={avatar}
-                alt="Avatar"
-              />
+            <div className="h-20 w-20 rounded-2xl flex items-center justify-center text-white text-2xl font-semibold shadow-lg shadow-indigo-500/20 bg-slate-900 border border-slate-700 overflow-hidden">
+              {avatar ? (
+                <img className="h-full w-full object-cover" src={avatar} alt="Avatar" />
+              ) : (
+                <span className="font-bold text-indigo-400">{emp.name?.slice(0, 2).toUpperCase() || "CN"}</span>
+              )}
             </div>
             <button
+              type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-100 dark:text-slate-200 shadow ring-1 ring-slate-200 dark:ring-white/10"
+              className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg ring-2 ring-slate-900 transition"
+              title="Upload new profile picture"
             >
-              <Camera size={13} />
+              <Camera size={14} />
             </button>
 
             <input
@@ -300,8 +328,22 @@ function ProfileSection(user) {
             />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-200 dark:text-white">Profile photo</p>
-            <p className="text-xs text-slate-100 dark:text-slate-200">JPG or PNG. Max 4MB.</p>
+            <h3 className="text-sm font-bold text-white">Profile Photo</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Upload a new avatar. JPG, PNG, or WEBP up to 5MB.</p>
+            <div className="flex items-center gap-3 mt-2.5">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 transition"
+              >
+                Choose Photo
+              </button>
+              {avatarFile && (
+                <span className="text-xs text-indigo-400 font-semibold flex items-center gap-1">
+                  <CheckCircle2 size={13} /> Photo selected! Click "Save Changes".
+                </span>
+              )}
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -401,66 +443,46 @@ function ProfileSection(user) {
 }
 
 // Company Section
-function CompanySection(user) {
-  const emp = user.user
-  const [isChanged, setisChanged] = useState(false)
-  const [isChangedHR, setisChangedHR] = useState(false)
-  const [isChangedBR, setisChangedBR] = useState(false)
-  const [avatar, setAvatar] = useState(emp?.company?.logo);
+function CompanySection(props) {
+  const emp = props.user || props;
+  const isAdmin = emp?.role === "admin";
+  const company = emp?.company || {};
+
+  const [isChanged, setisChanged] = useState(false);
+  const [avatar, setAvatar] = useState(company?.logo);
   const [avatarFile, setAvatarFile] = useState(null);
   const fileInputRef = useRef(null);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+
   const [form, setform] = useState({
-    "name": emp.company?.name || "",
-    "logo": emp.company?.logo || "",
-    "email": emp.company?.email || "",
-    "phone": emp.company?.phone || "",
-    "foundedYear": emp.company?.foundedYear || "",
-    "industry": emp.company?.industry || "",
-    "address": emp.company?.address || "",
-    "website": emp.company?.website || "",
-    "size": emp.company?.companySize || "",
-
-
-    "primaryColor": emp.company?.primaryColor || "",
-    "secondaryColor": emp.company?.secondaryColor || "",
-
-    "officeStartTime": emp.company?.officeStartTime || "",
-    "officeEndTime": emp.company?.officeEndTime || "",
-    "timeZone": emp.company?.timezone || "",
-    "currency": emp.company?.currency || "",
-    "workingDays": emp.company?.workingDays || "",
-  })
+    name: company?.name || "",
+    logo: company?.logo || "",
+    email: company?.email || "",
+    phone: company?.phone || "",
+    foundedYear: company?.foundedYear || "",
+    industry: company?.industry || "",
+    address: company?.address || "",
+    website: company?.website || "",
+    size: company?.companySize || "",
+    primaryColor: company?.primaryColor || "",
+    secondaryColor: company?.secondaryColor || "",
+    officeStartTime: company?.officeStartTime || "",
+    officeEndTime: company?.officeEndTime || "",
+    timeZone: company?.timezone || "",
+    currency: company?.currency || "",
+    workingDays: company?.workingDays || "",
+  });
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    console.log(e.target)
     setform((prev) => ({
       ...prev,
       [name]: value,
     }));
-
-    if (name == "primaryColor" || name == "secondaryColor") {
-      setisChangedBR(true)
-    }
-    if (
-      name === "officeStartTime" ||
-      name === "officeEndTime" ||
-      name === "workingDays" ||
-      name === "currency" ||
-      name === "timeZone"
-    ) {
-      setisChangedHR(true)
-    }
-
     setisChanged(true);
   };
 
-
-  // Handle Form Update
   const handleFormUpdate = () => {
-    console.log("form : ", form)
-
     const data = new FormData();
     data.append("name", form.name);
     data.append("email", form.email);
@@ -470,222 +492,119 @@ function CompanySection(user) {
     data.append("website", form.website);
     data.append("companySize", form.size);
     data.append("address", form.address);
-    data.append("emergencyContact", form.emergencyContact);
-    data.append("primaryColor", form.primaryColor);
-    data.append("secondaryColor", form.secondaryColor);
-    data.append("officeStartTime", form.officeStartTime);
-    data.append("officeEndTime", form.officeEndTime);
-    data.append("workingDays", form.workingDays);
-    data.append("currency", form.currency);
-    data.append("timezone", form.timeZone);
     if (avatarFile) {
       data.append("logo", avatarFile);
     }
-    dispatch(updateCompanyInfo(data))
-    setisChanged(false)
-  }
-
+    dispatch(updateCompanyInfo(data));
+    setisChanged(false);
+  };
 
   const handleChangeAvatar = async (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
-
-    // Validate image
-    if (!file.type.startsWith("image/")) {
-      alert("Please select an image.");
-      return;
-    }
-
-    if (file.size > 4 * 1024 * 1024) {
-      alert("Image size should be less than 4MB.");
-      return;
-    }
-    // Local preview
+    if (!file.type.startsWith("image/")) return;
     const preview = URL.createObjectURL(file);
     setAvatar(preview);
-    setisChanged(true)
-
-    setAvatarFile(file);                  // Save actual file
+    setAvatarFile(file);
     setisChanged(true);
   };
 
+  // If user is NOT admin, show clean READ-ONLY company view
+  if (!isAdmin) {
+    const details = [
+      { label: "Company Name", value: company?.name || "N/A", icon: Building2 },
+      { label: "Business Email", value: company?.email || "N/A", icon: Mail },
+      { label: "Phone Number", value: company?.phone || "N/A", icon: Phone },
+      { label: "Industry", value: company?.industry || "N/A", icon: Briefcase },
+      { label: "Company Size", value: company?.companySize || "N/A", icon: UserCircle2 },
+      { label: "Founded Year", value: company?.foundedYear || "N/A", icon: Calendar },
+      { label: "Website", value: company?.website || "N/A", icon: Globe },
+      { label: "Address", value: company?.address || "N/A", icon: MapPin },
+    ];
 
+    return (
+      <div className="space-y-6">
+        <Card
+          title="Organization Details"
+          description="Read-only view of your company workspace"
+          icon={Building2}
+        >
+          <div className="mb-6 flex items-center gap-4 border-b border-slate-100 dark:border-white/10 pb-6">
+            <div className="h-16 w-16 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-bold text-xl overflow-hidden border border-indigo-500/20">
+              {company?.logo ? (
+                <img src={company.logo} alt={company.name} className="h-full w-full object-cover" />
+              ) : (
+                (company?.name || "CN").slice(0, 2).toUpperCase()
+              )}
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white">{company?.name || "CampusNest Organization"}</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{company?.industry || "Workspace"} • {company?.companySize || "1-10"} members</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {details.map((item) => (
+              <div key={item.label} className="flex items-center gap-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] p-3.5 border border-slate-200/60 dark:border-white/5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white dark:bg-white/5 ring-1 ring-slate-200 dark:ring-white/10 text-indigo-500 shrink-0">
+                  <item.icon size={16} />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">{item.label}</p>
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-100 truncate">{item.value}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Admin editable view
   return (
     <div className="space-y-6">
       <Card
         title="Company Information"
-        description="Your basic company details"
+        description="Manage your organization settings (Admin only)"
         icon={UserCircle2}
-        action={isChanged ? (<Button onClick={handleFormUpdate} className="bg-blue-700 text-white" icon={SaveAll} >Save Changes</Button>) : (<Button icon={Edit3} variant="secondary">Edit Profile</Button>)}
+        action={isChanged ? (<Button onClick={handleFormUpdate} className="bg-indigo-600 text-white" icon={SaveAll}>Save Changes</Button>) : null}
       >
         <div className="mb-6 flex items-center gap-4">
           <div className="relative">
-            <div className="h-20 w-20 rounded-2xl bg-gradient-to-br flex items-center justify-center text-white text-2xl font-semibold shadow-lg shadow-indigo-500/20">
-              <img
-                className="h-full w-full rounded-2xl object-cover"
-                src={avatar}
-                alt="Avatar"
-              />
+            <div className="h-20 w-20 rounded-2xl bg-slate-800 flex items-center justify-center text-white text-2xl font-semibold shadow-lg overflow-hidden border border-slate-700">
+              {avatar ? (
+                <img className="h-full w-full object-cover" src={avatar} alt="Logo" />
+              ) : (
+                (form.name || "CN").slice(0, 2).toUpperCase()
+              )}
             </div>
             <button
+              type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-white dark:bg-slate-800 text-slate-100 dark:text-slate-200 shadow ring-1 ring-slate-200 dark:ring-white/10"
+              className="absolute -bottom-1.5 -right-1.5 flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-white shadow ring-2 ring-slate-900 hover:bg-indigo-500 transition"
             >
               <Camera size={13} />
             </button>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleChangeAvatar}
-            />
+            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleChangeAvatar} />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-200 dark:text-white">Logo</p>
-            <p className="text-xs text-slate-100 dark:text-slate-200">JPG or PNG. Max 4MB.</p>
+            <p className="text-sm font-semibold text-slate-800 dark:text-white">Organization Logo</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">JPG or PNG. Max 4MB.</p>
           </div>
         </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Company Name" icon={UserCircle2} name="name" onChange={(e) => handleFormChange(e)} value={form.name} />
+          <Field label="Company Name" icon={UserCircle2} name="name" onChange={handleFormChange} value={form.name} />
           <Field label="Company Email" icon={Mail} name="email" disabled={true} value={form.email} type="email" />
-          <Field label="Company Phone Number" icon={Phone} name="phone" onChange={(e) => handleFormChange(e)} value={form.phone} />
-          <Field label="Founded Year" icon={Calendar} onChange={(e) => handleFormChange(e)} name="foundedYear" value={form.foundedYear} />
-          <Select label="Industry" icon={User} onChange={(e) => handleFormChange(e)} name="industry" options={[form.industry, "Sole Proprietorship", "Partnership", "Limited Liability Company", "Corporation (e.g., C-Corp or S-Corp)", "Cooperative"]} />
-          <Field label="Company Address" icon={MapPin} onChange={(e) => handleFormChange(e)} name="address" value={form.address} />
-          <Select label="Company Size" icon={User} onChange={(e) => handleFormChange(e)} name="size" options={[form.size, "1-10",
-            "11-50",
-            "51-200",
-            "201-500",
-            "501-1000",
-            "1000+",]} />
-          <Field label="Website" icon={Phone} onChange={(e) => handleFormChange(e)} name="website" value={form.website} className="sm:col-span-2" />
+          <Field label="Company Phone Number" icon={Phone} name="phone" onChange={handleFormChange} value={form.phone} />
+          <Field label="Founded Year" icon={Calendar} onChange={handleFormChange} name="foundedYear" value={form.foundedYear} />
+          <Select label="Industry" icon={Briefcase} onChange={handleFormChange} name="industry" value={form.industry} options={["Sole Proprietorship", "Partnership", "Limited Liability Company", "Corporation (e.g., C-Corp or S-Corp)", "Cooperative", "Education / College", "Technology"]} />
+          <Field label="Company Address" icon={MapPin} onChange={handleFormChange} name="address" value={form.address} />
+          <Select label="Company Size" icon={UserCircle2} onChange={handleFormChange} name="size" value={form.size} options={["1-10", "11-50", "51-200", "201-500", "501-1000", "1000+"]} />
+          <Field label="Website" icon={Globe} onChange={handleFormChange} name="website" value={form.website} className="sm:col-span-2" />
         </div>
       </Card>
-
-      {/* Hr Settings */}
-      {/* <Card
-        title="HR Information"
-        description="Your basic company details"
-        icon={UserCircle2}
-        action={isChangedHR ? (<Button onClick={handleFormUpdate} className="bg-blue-700 text-white" icon={SaveAll} >Save Changes</Button>) : (<Button icon={Edit3} variant="secondary">Edit Profile</Button>)}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Office Start Time" icon={UserCircle2} name="officeStartTime" onChange={(e) => handleFormChange(e)} value={form.officeStartTime} />
-          <Field label="Office End Time" icon={Mail} name="officeEndTime" value={form.officeEndTime} type="email" />
-          <Field label="Currency" icon={Mail} name="currency" disabled={true} value={form.currency} type="email" />
-          <Select
-            label="Working Days"
-            icon={User}
-            name="workingDays"
-            value={form.workingDays}
-            onChange={handleFormChange}
-            options={[
-"Monday-Friday",
-"Monday-Saturday",
-"All Week"
-]}
-          />
-          <Field label="Time Zone" icon={MapPin} onChange={(e) => handleFormChange(e)} name="timeZone" value={form.timeZone} />
-        </div>
-      </Card> */}
-
-      {/* Branding
-      <Card
-        title="Branding"
-        description="Your basic company details"
-        icon={UserCircle2}
-        action={isChangedBR ? (<Button onClick={handleFormUpdate} className="bg-blue-700 text-white" icon={SaveAll} >Save Changes</Button>) : (<Button icon={Edit3} variant="secondary">Edit Profile</Button>)}
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Field label="Primary Color" icon={UserCircle2} name="primaryColor" onChange={(e) => handleFormChange(e)} value={form.primaryColor} />
-          <Field label="Secondary Color" icon={Mail} name="secondaryColor" onChange={(e) => handleFormChange(e)} value={form.secondaryColor} type="email" />
-        </div>
-      </Card>
-
-      <Card title="Professional Information" description="Role, team and employment details" icon={Briefcase}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 mb-6">
-          {[
-            { label: "Employee ID", value: emp.id, icon: FileText },
-            { label: "Department", value: emp.department, icon: Building2 },
-            { label: "Designation", value: emp.designation, icon: Briefcase },
-            { label: "Reporting Manager", value: emp.reportingManager, icon: User },
-            { label: "Employment Type", value: emp.employmentType, icon: Briefcase },
-            { label: "Joining Date", value: new Date(emp.joiningDate).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" }), icon: Calendar },
-            { label: "Work Mode", value: emp.workMode, icon: Laptop2 },
-          ].map((item) => (
-            <div key={item.label} className="flex items-center gap-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] px-4 py-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white dark:bg-white/5  ring-1 ring-slate-200 dark:ring-white/10 shrink-0">
-                <item.icon size={15} />
-              </span>
-              <div className="min-w-0">
-                <p className="text-[11px] font-medium uppercase tracking-wide text-slate-200">{item.label}</p>
-                <p className="text-sm font-medium text-slate-200 dark:text-slate-100 truncate">{item.value}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mb-5">
-          <p className="text-xs font-medium text-slate-100 dark:text-slate-200 mb-2">Skills</p>
-          <div className="flex flex-wrap gap-2">
-            {emp?.skills?.map((s) => (
-              <Chip key={s}>{s}</Chip>
-            ))}
-            <button className="inline-flex items-center gap-1 rounded-lg border border-dashed border-slate-300 dark:border-white/15 px-2.5 py-1 text-xs font-medium text-slate-200 hover:text-indigo-500 hover:border-indigo-300 transition">
-              <Plus size={12} /> Add
-            </button>
-          </div>
-        </div>
-        <div>
-          <p className="text-xs font-medium text-slate-100 dark:text-slate-200 mb-2">Bio</p>
-          <p className="text-sm leading-relaxed text-slate-100 dark:text-slate-100">{emp.bio}</p>
-        </div>
-      </Card> */}
-
-      {/* <Card title="Work Statistics" description="Snapshot of your current workload" icon={TrendingUp}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
-          {workStats.map((s) => {
-            const t = tintMap[s.tint];
-            return (
-              <div key={s.label} className={`rounded-xl border border-slate-100 dark:border-white/5 p-4 ${t.bg} transition-transform hover:-translate-y-0.5 duration-200`}>
-                <span className={`inline-flex h-8 w-8 items-center justify-center rounded-lg bg-white dark:bg-white/10 ${t.text} mb-3 ring-1 ${t.ring}`}>
-                  <s.icon size={15} />
-                </span>
-                <p className="text-xl font-bold text-slate-200 dark:text-white">{s.value}</p>
-                <p className="text-xs text-slate-100 dark:text-slate-200 mt-0.5">{s.label}</p>
-              </div>
-            );
-          })}
-        </div>
-      </Card> */}
-
-      {/* <Card title="Performance" description="Rolling 30-day performance indicators" icon={Target}>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-2">
-          {performance.map((p) => (
-            <RadialProgress key={p.label} value={p.value} label={p.label} size={92} />
-          ))}
-        </div>
-      </Card> */}
-
-      {/* <Card title="Recent Activity" description="Your latest actions across projects" icon={ActivityIcon}>
-        <ol className="relative border-l border-slate-100 dark:border-white/10 pl-6 space-y-6">
-          {activityFeed.map((a, i) => {
-            const t = tintMap[a.tint];
-            return (
-              <li key={i} className="relative">
-                <span className={`absolute -left-[31px] flex h-6 w-6 items-center justify-center rounded-full ring-4 ring-white dark:ring-slate-900 ${t.bg} ${t.text}`}>
-                  <a.icon size={12} />
-                </span>
-                <p className="text-sm font-medium text-slate-200 dark:text-slate-100">{a.title}</p>
-                <p className="text-sm text-slate-100 dark:text-slate-200">{a.desc}</p>
-                <p className="text-xs text-slate-200 dark:text-slate-100 mt-1">{a.time}</p>
-              </li>
-            );
-          })}
-        </ol>
-      </Card> */}
     </div>
   );
 }
@@ -730,53 +649,114 @@ function NotificationsSection() {
   );
 }
 
-function AppearanceSection({ dark, setDark }) {
-  const [accent, setAccent] = useState(accentColors[0].value);
-  useEffect(() => {
-  document.documentElement.style.setProperty("--accent", accent);
-}, [accent]);
-  console.log("Accent : ",accent);
-  
+function AppearanceSection() {
+  const { theme, setTheme, accent, setAccent, font, setFont, FONT_OPTIONS } = useTheme();
+
   return (
     <div className="space-y-6">
-      {/* <Card title="Theme" description="Choose how WorkForce looks on your device" icon={Palette}>
-        <div className="grid grid-cols-2 gap-3">
-          {[{ id: "light", label: "Light", icon: Sun }, { id: "dark", label: "Dark", icon: Moon }].map((t) => {
-            const active = (t.id === "dark") === dark;
+      <Card title="Interface Theme" description="Choose light or dark visual theme for your workspace" icon={Palette}>
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { id: "light", label: "Light Mode", icon: Sun, desc: "Clean slate background with high contrast" },
+            { id: "dark", label: "Dark Mode", icon: Moon, desc: "Sleek dark glassmorphic interface" },
+          ].map((t) => {
+            const active = theme === t.id;
             return (
               <button
                 key={t.id}
-                onClick={() => setDark(t.id === "dark")}
-                className={`flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition ${active
-                  ? " bg-indigo-50 dark:bg-indigo-100/10  dark:text-indigo-300 ring-4 ring-indigo-500/10"
-                  : "border-slate-200 dark:border-white/10 text-slate-100 dark:text-slate-200 hover:border-slate-300"
-                  }`}
+                type="button"
+                onClick={() => setTheme(t.id)}
+                className={`flex flex-col items-start p-4 rounded-xl border transition-all text-left ${
+                  active
+                    ? "bg-slate-800/80 text-white border-indigo-500 ring-2 ring-indigo-500/20 shadow-lg"
+                    : "bg-slate-950/60 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200"
+                }`}
               >
-                <t.icon size={15} /> {t.label}
+                <div className="flex items-center justify-between w-full mb-2">
+                  <div className="flex items-center gap-2 font-bold text-sm">
+                    <t.icon size={18} className={active ? "text-indigo-400" : "text-slate-400"} />
+                    <span>{t.label}</span>
+                  </div>
+                  {active && <CheckCircle2 size={16} className="text-indigo-400" />}
+                </div>
+                <p className="text-xs text-slate-400">{t.desc}</p>
               </button>
             );
           })}
         </div>
-      </Card> */}
-      <Card title="Accent Color" description="Pick the primary color used across the app" icon={Palette}>
-        <div className="flex flex-wrap gap-3">
-          {accentColors.map((c) => (
-            <button
-              key={c.value}
-              onClick={() => setAccent(c.value)}
-              aria-label={c.name}
-              className="h-9 w-9 rounded-full ring-2 ring-offset-2 dark:ring-offset-slate-900 transition"
-              style={{ backgroundColor: c.value, ringColor: accent === c.value ? c.value : "transparent" }}
-            />
-          ))}
+      </Card>
+
+      <Card title="Accent Brand Color" description="Select the primary brand highlight color applied across buttons, cards, and active indicators" icon={Sparkles}>
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-4">
+            {accentColors.map((c) => {
+              const isSelected = accent?.toLowerCase() === c.value.toLowerCase();
+              return (
+                <button
+                  key={c.value}
+                  type="button"
+                  onClick={() => setAccent(c.value)}
+                  aria-label={c.name}
+                  className={`relative flex items-center gap-2.5 px-3 py-2 rounded-xl border transition-all ${
+                    isSelected
+                      ? "bg-slate-800 text-white border-indigo-500 ring-2 ring-indigo-500/20"
+                      : "bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700"
+                  }`}
+                >
+                  <span
+                    className="h-6 w-6 rounded-full shadow-inner flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: c.value }}
+                  >
+                    {isSelected && <CheckCircle2 size={14} className="text-white drop-shadow" />}
+                  </span>
+                  <span className="text-xs font-semibold">{c.name}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+            <span className="text-xs text-slate-400 font-medium">Active Primary Theme Color</span>
+            <div className="flex items-center gap-2">
+              <span className="h-4 w-4 rounded-full" style={{ backgroundColor: accent }} />
+              <span className="text-xs font-mono font-bold text-indigo-400">{accent}</span>
+            </div>
+          </div>
         </div>
       </Card>
-      {/* <Card title="Display" description="Fine-tune density and motion" icon={SlidersHorizontal}>
-        <div className="divide-y divide-slate-100 dark:divide-white/5">
-          <Toggle label="Compact Mode" description="Reduce padding for a denser layout" />
-          <Toggle label="Reduced Motion" description="Minimize animations and transitions" />
+
+      <Card title="Typography Font Family" description="Choose the typeface used across the interface text, headings, and labels" icon={Type}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          {FONT_OPTIONS?.map((f) => {
+            const isSelected = font === f.id;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => setFont(f.id)}
+                className={`flex flex-col items-start p-4 rounded-xl border transition-all text-left ${
+                  isSelected
+                    ? "bg-slate-800/90 text-white border-indigo-500 ring-2 ring-indigo-500/20 shadow-lg"
+                    : "bg-slate-950/60 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200"
+                }`}
+              >
+                <div className="flex items-center justify-between w-full mb-1.5">
+                  <span className="text-sm font-bold text-white" style={{ fontFamily: f.stack }}>
+                    {f.name}
+                  </span>
+                  {isSelected && <CheckCircle2 size={16} className="text-indigo-400 flex-shrink-0" />}
+                </div>
+                <p className="text-xs text-slate-400 mb-3">{f.desc}</p>
+                <div className="w-full pt-2 border-t border-slate-800/80">
+                  <span className="text-xs font-medium text-slate-300 tracking-wide" style={{ fontFamily: f.stack }}>
+                    Aa Bb Cc 123
+                  </span>
+                </div>
+              </button>
+            );
+          })}
         </div>
-      </Card> */}
+      </Card>
     </div>
   );
 }
@@ -907,75 +887,73 @@ function AboutSection() {
 
 // Sidebar
 function Sidebar({ active, setActive, user, dark, mobileOpen, setMobileOpen }) {
-  console.log("check : ",user);
-  
   return (
     <>
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={() => setMobileOpen(false)}
         />
       )}
       <aside
-        className={`fixed z-40 inset-y-0 left-0 w-72 transform bg-primary border-r border-slate-200 dark:border-white/10 transition-transform duration-300 lg:static lg:translate-x-0 lg:z-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:sticky lg:top-0 lg:h-screen overflow-y-auto`}
+        className={`fixed z-40 inset-y-0 left-0 w-64 transform bg-slate-900 border-r border-slate-800 transition-transform duration-300 lg:static lg:translate-x-0 lg:z-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:sticky lg:top-0 lg:h-screen overflow-y-auto shadow-2xl flex flex-col justify-between`}
       >
-        <div className="flex items-center justify-between px-5 pt-5 lg:hidden">
-          <span className="text-sm font-semibold text-gray-100 dark:text-white">Menu</span>
-          <button onClick={() => setMobileOpen(false)} className="text-slate-200 hover:text-slate-100">
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="px-6 pt-6 pb-5 border-b border-slate-100 dark:border-white/5">
-          <div className="relative w-fit">
-            <img src={user?.avatar} className="h-16 w-16 rounded-2xl  flex items-center justify-center text-white text-lg font-semibold shadow-lg shadow-indigo-500/20">
-            </img>
-            <span className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-emerald-400 ring-4 ring-white dark:ring-slate-900" />
-          </div>
-          <p className="mt-3 text-sm font-semibold text-slate-200 dark:text-white">{user?.name}</p>
-          <p className="text-xs text-slate-200">{user?.designation}</p>
-          <p className="text-xs text-slate-200 mt-0.5">{user?.department}</p>
-          <div className="mt-1.5 bg-white p-1 rounded-md px-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-emerald-500">
-            <Circle size={7} className="fill-emerald-800  stroke-none" /> Online
+        <div>
+          <div className="flex items-center justify-between px-5 pt-5 lg:hidden border-b border-slate-800 pb-4">
+            <span className="text-sm font-bold text-white uppercase tracking-wider">Settings Menu</span>
+            <button onClick={() => setMobileOpen(false)} className="text-slate-400 hover:text-white">
+              <X size={18} />
+            </button>
           </div>
 
-          <div className="mt-4">
-            <div className="mb-1.5 flex items-center justify-between text-[11px] text-white">
-              <span>Profile completion</span>
-              {/* <span>{employee.profileCompletion}%</span> */}
-            </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-white dark:bg-white/5">
-              <div
-                className="h-full rounded-full  transition-all duration-700"
-                // style={{ width: `${employee.profileCompletion}%` }}
-              />
+          <div className="px-5 pt-6 pb-5 border-b border-slate-800">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="h-12 w-12 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-indigo-400 overflow-hidden text-lg">
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt={user.name} className="h-full w-full object-cover" />
+                  ) : (
+                    user?.name?.slice(0, 2).toUpperCase() || "CN"
+                  )}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-400 ring-2 ring-slate-900" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-white truncate">{user?.name}</p>
+                <p className="text-xs text-slate-400 truncate">{user?.email}</p>
+                <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                  {user?.role || "Member"}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <nav className="px-3 py-4 space-y-1">
-          {navItems.map((item) => {
-            const isActive = active === item.key;
-            return (
-              <button
-                key={item.key}
-                onClick={() => {
-                  setActive(item.key);
-                  setMobileOpen(false);
-                }}
-                className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
-                  ? "  dark:text-indigo-300 ring-1 ring-indigo-500/20"
-                  : "text-white dark:text-white hover:bg-white dark:hover:bg-white/1 hover:text-slate-100 dark:hover:text-slate-200"
+          <nav className="px-3 py-4 space-y-1">
+            {navItems.map((item) => {
+              const isActive = active === item.key;
+              const Icon = item.icon || User;
+              return (
+                <button
+                  key={item.key}
+                  onClick={() => {
+                    setActive(item.key);
+                    setMobileOpen(false);
+                  }}
+                  className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all duration-200 ${
+                    isActive
+                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
+                      : "text-slate-400 hover:text-white hover:bg-slate-800/60"
                   }`}
-              >
-                <item.icon size={16} className={isActive ? "text-indigo-100" : "opacity-70"} />
-                {item.label}
-              </button>
-            );
-          })}
-        </nav>
+                >
+                  <Icon size={18} className={isActive ? "text-white" : "text-slate-400"} />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
       </aside>
     </>
   );
@@ -984,69 +962,57 @@ function Sidebar({ active, setActive, user, dark, mobileOpen, setMobileOpen }) {
 // Main
 export default function EmployeeProfileSettings() {
   const [active, setActive] = useState("company");
-  const [dark, setDark] = useState(true);
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === "dark";
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user } = useSelector((state) => state.auth);
-  console.log("He ",user)
-  const activeLabel = navItems.find((n) => n.key === active)?.label ?? "Profile";
+  const activeLabel = navItems.find((n) => n.key === active)?.label ?? "Company";
   const sectionDescriptions = {
-    company: "View and manage your company details",
-    profile: "View and manage your personal and professional details",
-    security: "Manage passwords, sessions and two-factor authentication",
-    notifications: "Choose which updates you want to hear about",
-    appearance: "Personalize how WorkForce looks for you",
-    preferences: "Set your language, time zone and formats",
-    ai: "Configure the AI assistant across WorkForce",
-    privacy: "Control what teammates can see about you",
-    activity: "A timeline of everything you've been up to",
-    about: "App version, build info and legal",
+    company: "View and manage organization details",
+    profile: "View and manage your personal and professional profile",
+    settings: "Account security, active sessions, and password management",
+    appearance: "Customize interface theme and visual preferences",
   };
 
   return (
-    <div className={``}>
-      <div className="md:ml-60 pb-16 md:pb-5 bg-slate-50 dark:bg-slate-950 text-slate-200 dark:text-slate-100 font-sans transition-colors duration-300">
-        <div className="flex  ">
-          <Sidebar active={active} user={user} setActive={setActive} dark={dark} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+    <div className="min-h-screen pb-24 md:pb-6 md:ml-60 bg-slate-950 text-slate-100 font-sans">
+      <div className="flex">
+        <Sidebar active={active} user={user} setActive={setActive} dark={isDark} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
-          <div className="flex-1 bg-white text-black min-w-0">
-            {/* Top bar (mobile) */}
-            <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-200 dark:border-white/10 bg-white/80 dark:bg-slate-950/80 backdrop-blur px-4 py-3 lg:hidden">
-              <button onClick={() => setMobileOpen(true)} className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-white/5">
-                <Menu size={18} />
-              </button>
-              <span className="text-sm font-semibold">{activeLabel}</span>
-              <button onClick={() => setDark((d) => !d)} className="flex h-9 w-9 items-center justify-center rounded-lg  hover:bg-slate-100 dark:hover:bg-white/5">
-                {dark ? <Sun size={16} /> : <Moon size={16} />}
+        <div className="flex-1 bg-slate-950 text-slate-100 min-w-0">
+          {/* Top bar (mobile) */}
+          <div className="sticky top-0 z-20 flex items-center justify-between border-b border-slate-800 bg-slate-900/90 backdrop-blur px-4 py-3 lg:hidden">
+            <button onClick={() => setMobileOpen(true)} className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800 text-slate-200">
+              <Menu size={18} />
+            </button>
+            <span className="text-sm font-bold text-white">{activeLabel}</span>
+            <button onClick={toggleTheme} className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800 text-slate-200">
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+          </div>
+
+          <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 space-y-6">
+            <div className="hidden lg:flex items-center justify-between pb-5 border-b border-slate-800">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-indigo-400 mb-1">Preferences & Account</p>
+                <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">{activeLabel}</h1>
+                <p className="text-sm text-slate-400 mt-1">{sectionDescriptions[active]}</p>
+              </div>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900 px-4 py-2 text-sm font-semibold text-slate-200 hover:text-white hover:bg-slate-800 transition shadow-lg"
+              >
+                {isDark ? <Sun size={16} className="text-amber-400" /> : <Moon size={16} className="text-indigo-400" />}
+                {isDark ? "Light Theme" : "Dark Theme"}
               </button>
             </div>
 
-            <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-10 py-6 lg:py-10">
-              <div className="hidden lg:flex items-center justify-between mb-8">
-                <div>
-                  <h1 className="text-2xl font-bold tracking-tight text-accent ">{activeLabel}</h1>
-                  <p className="text-sm mt-1">{sectionDescriptions[active]}</p>
-                </div>
-                <button
-                  onClick={() => setDark((d) => !d)}
-                  className="flex items-center gap-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 px-3.5 py-2 text-sm font-medium text-slate-100 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-white/10 transition"
-                >
-                  {dark ? <Sun size={15} /> : <Moon size={15} />}
-                  {dark ? "Light Mode" : "Dark Mode"}
-                </button>
-              </div>
-
-              {active === "profile" && <ProfileSection user={user} />}
-              {active === "company" && <CompanySection user={user} />}
-              {active === "settings" && <Settings />}
-              {active === "notifications" && <NotificationsSection />}
-              {active === "appearance" && <AppearanceSection dark={dark} setDark={setDark} />}
-              {active === "preferences" && <PreferencesSection />}
-              {active === "ai" && <AISection />}
-              {active === "privacy" && <PrivacySection />}
-              {active === "activity" && <ActivitySection />}
-              {active === "about" && <AboutSection />}
-            </main>
-          </div>
+            {active === "company" && <CompanySection user={user} />}
+            {active === "profile" && <ProfileSection user={user} />}
+            {active === "settings" && <Settings />}
+            {active === "appearance" && <AppearanceSection />}
+          </main>
         </div>
       </div>
     </div>

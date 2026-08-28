@@ -18,7 +18,7 @@ const router = express.Router();
 router.use(auth);
 
 router.use(
-  allowRoles("employee")
+  allowRoles("employee", "admin")
 );
 
 router.get(

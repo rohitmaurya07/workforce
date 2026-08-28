@@ -73,15 +73,15 @@ export const register =
 
       if (data.success) {
         dispatch(setUser(data.user));
-        toast(data.message)
+        toast.success(data.message || "Registered successfully!");
+        return true;
       }
+      return false;
     } catch (error) {
-      dispatch(
-        setError(
-          error.response?.data?.message ||
-            "Registration Failed"
-        )
-      );
+      const msg = error.response?.data?.message || "Registration Failed";
+      dispatch(setError(msg));
+      toast.error(msg);
+      return false;
     } finally {
       dispatch(setLoading(false));
     }
@@ -102,23 +102,41 @@ export const login =
       
       if (data.success) {
         dispatch(setUser(data.user));
-        toast(data.message)
-        return true
+        toast.success(data.message || "Login successful");
+        return true;
       }
+      return false;
     } catch (error) {
-      dispatch(
-        setError(
-          error.response?.data?.message ||
-            "Login Failed"
-        )
-      );
-        toast(error.response?.data?.message)
-
+      const msg = error.response?.data?.message || "Login Failed";
+      dispatch(setError(msg));
+      toast.error(msg);
+      return false;
     } finally {
       dispatch(setLoading(false));
     }
   };
 
+
+// Join Company
+export const joinCompany = (companyId) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    const { data } = await axiosInstance.post("/company/join", { companyId });
+    if (data.success) {
+      dispatch(setUser(data.user));
+      toast.success(data.message || "Joined company successfully!");
+      return true;
+    }
+    return false;
+  } catch (error) {
+    const msg = error.response?.data?.message || "Failed to join company";
+    toast.error(msg);
+    dispatch(setError(msg));
+    return false;
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
 //   Logout
 export const logout =
@@ -128,9 +146,10 @@ export const logout =
         "/auth/logout"
       );
 
-      dispatch(logoutUser());
-      
+      dispatch(setUser(null));
+      toast.success("Logged out successfully");
     } catch (error) {
+      dispatch(setUser(null));
       dispatch(
         setError(
           error.response?.data?.message ||
@@ -140,6 +159,48 @@ export const logout =
     }
   };
 
+
+// Forgot Password
+export const forgotPassword =
+  (email) => async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      const { data } = await axiosInstance.post("/auth/forgot-password", { email });
+      if (data.success) {
+        toast.success(data.message || "Reset link generated!");
+        return data;
+      }
+      return null;
+    } catch (error) {
+      const msg = error.response?.data?.message || "Forgot Password Failed";
+      toast.error(msg);
+      dispatch(setError(msg));
+      return null;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+// Reset Password
+export const resetPassword =
+  (token, newPassword) => async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      const { data } = await axiosInstance.post("/auth/reset-password", { token, newPassword });
+      if (data.success) {
+        toast.success(data.message || "Password reset successful");
+        return true;
+      }
+      return false;
+    } catch (error) {
+      const msg = error.response?.data?.message || "Reset Password Failed";
+      toast.error(msg);
+      dispatch(setError(msg));
+      return false;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
 //   Check Current User
 export const getCurrentUser =
@@ -154,8 +215,9 @@ export const getCurrentUser =
 
       if (data.success) {
         dispatch(setUser(data.user));
+      } else {
+        dispatch(setUser(null));
       }
-      dispatch(setLoading(false))
     } catch (error) {
       dispatch(setUser(null));
     } finally {

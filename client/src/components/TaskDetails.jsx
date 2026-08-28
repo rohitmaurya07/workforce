@@ -106,64 +106,62 @@ const formatDate = (date) =>
 const safeFiles = task.attachments || [];
 
   return (
-    <div className="min-h-screen ml-18 bg-slate-950 px-4 py-6 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto space-y-4">
+    <div className="min-h-screen pb-24 md:pb-6 md:ml-60 px-4 py-6 sm:px-6 lg:px-8 bg-slate-950 font-sans text-slate-100">
+      <div className="max-w-6xl mx-auto space-y-6">
 
         {/* ── Back + Breadcrumb ── */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-xs">
           <button
             onClick={() => navigate(-1)}
-            className="text-slate-500 hover:text-slate-300 transition-colors p-1 rounded-lg hover:bg-slate-800"
+            className="text-slate-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-slate-900 border border-slate-800"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
             </svg>
           </button>
-          <span className="text-xs text-slate-600">{task.projectId?.name}</span>
-          <span className="text-slate-700 text-xs">/</span>
-          <span className="text-xs text-slate-400 truncate">{task.title}</span>
+          <span className="text-slate-400">{task.projectId?.name || "Workspace"}</span>
+          <span className="text-slate-700">/</span>
+          <span className="text-indigo-400 font-semibold truncate">{task.title}</span>
         </div>
 
         {/* ── Header Card ── */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-          <div className={`h-0.5 w-full ${status.bar}`} />
-          <div className="p-5 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className={`h-1 w-full ${status.bar}`} />
+          <div className="p-6">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <h1 className="text-lg sm:text-xl font-semibold text-white leading-snug">{task.title}</h1>
+                <h1 className="text-xl sm:text-2xl font-extrabold text-white leading-snug">{task.title}</h1>
                 {task.description && (
-                  <p className="text-slate-400 text-sm mt-2 leading-relaxed">{task.description}</p>
+                  <p className="text-slate-300 text-sm mt-2 leading-relaxed">{task.description}</p>
                 )}
               </div>
               <div className="flex sm:flex-col items-center sm:items-end gap-2 flex-shrink-0">
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${priority.badge}`}>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${priority.badge}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${priority.dot}`} />
-                  {task.priority}
+                  {task.priority} Priority
                 </span>
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.badge}`}>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${status.badge}`}>
                   {status.label}
                 </span>
               </div>
             </div>
 
-            <div className="mt-5 pt-4 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="mt-6 pt-4 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-slate-400">
+                <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>
-                Due{" "}
-                <span className="text-slate-300 font-medium">
+                Due Date:{" "}
+                <span className="text-white font-semibold">
                   {new Date(task.dueDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" })}
                 </span>
               </div>
               {isAdmin && (
                 <button
                   onClick={handleDeleteTask}
-                  className="inline-flex items-center gap-1.5 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 px-3 py-1.5 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 px-3.5 py-1.5 rounded-xl font-semibold transition-all"
                 >
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                  </svg>
+                  <Trash2 size={14} />
                   Delete Task
                 </button>
               )}
@@ -171,182 +169,153 @@ const safeFiles = task.attachments || [];
           </div>
         </div>
 
-        {/* ── Body grid: Details + Actions / Chat ── */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 mt-6">
-          {/* Details + Actions */}
-          <div className="xl:col-span-4 space-y-6">
-            {/* Task Info */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-5">Task Details</p>
-              <div className="space-y-5">
+        {/* ── Body Grid ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Side Panel: Metadata + Status Update + Attachments */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* Task Details Info */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Task Details</p>
+              <div className="space-y-4">
                 <MetaRow label="Project">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-sm bg-indigo-500" />
-                    {task.projectId?.name ?? "—"}
+                    <span className="text-white font-semibold">{task.projectId?.name ?? "Standalone Task"}</span>
                   </div>
                 </MetaRow>
                 <MetaRow label="Assigned To">
                   <div className="flex items-center gap-2">
                     <Avatar name={task.assignedTo?.name} size="sm" />
-                    {task.assignedTo?.name ?? "—"}
+                    <span className="text-slate-200">{task.assignedTo?.name ?? "Unassigned"}</span>
                   </div>
                 </MetaRow>
                 <MetaRow label="Created By">
                   <div className="flex items-center gap-2">
                     <Avatar name={task.assignedBy?.name} size="sm" />
-                    {task.assignedBy?.name ?? "—"}
+                    <span className="text-slate-200">{task.assignedBy?.name ?? "Admin"}</span>
                   </div>
                 </MetaRow>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6">
-              <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-5">Actions</p>
+            {/* Status Update Card */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Status & Progress</p>
               <div className="space-y-3">
                 <div>
-                  <label className="text-xs text-slate-500 mb-1.5 block">Update Status</label>
+                  <label className="text-xs font-medium text-slate-300 mb-1.5 block">Update Status</label>
                   <select
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 transition-all cursor-pointer"
+                    className="w-full bg-slate-950 border border-slate-800 text-slate-100 text-sm rounded-xl px-3.5 py-2.5 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition cursor-pointer"
                   >
                     <option value="todo">Todo</option>
                     <option value="in_progress">In Progress</option>
                     <option value="review">Review</option>
-                    <option value="completed">Done</option>
+                    <option value="completed">Completed</option>
                   </select>
                 </div>
                 <button
                   onClick={handleUpdateTaskStatus}
-                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium py-2.5 rounded-xl transition-colors"
+                  className="w-full bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/20"
                 >
-                  Save Status
+                  Update Status
                 </button>
-                
               </div>
             </div>
-          </div>
 
-          {/* Chat */}
-          <div className="xl:col-span-8">
-            <Chat />
-          </div>
-          <div className="w-screen max-w-md mx-auto rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-sm shadow-xl shadow-black/20 p-5 sm:p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-semibold text-slate-200 tracking-wide">
-                Files
-              </h3>
-              {task?.attachments?.length > 0 && (
-                <span className="text-xs text-slate-500">{task.attachments.length} total</span>
-              )}
-            </div>
+            {/* Attachments & Files Card */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl text-slate-100 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  Attachments
+                </h3>
+                {task?.attachments?.length > 0 && (
+                  <span className="text-xs text-indigo-400 font-semibold">{task.attachments.length} files</span>
+                )}
+              </div>
 
-            {task.attachments && task.attachments.length > 0 ? (
-              <ul className="flex flex-col gap-2">
-                {task.attachments.map((file) => (
-                  <li
-                    key={file._id || file.fileName}
-                    className="group flex items-center gap-3 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 hover:bg-white/[0.07] hover:border-indigo-400/30 transition-colors duration-200"
-                  >
-                    <div className="flex items-center justify-center w-8 h-8 rounded-md bg-indigo-500/15 shrink-0">
-                      <File className="w-4 h-4 text-indigo-400" />
-                    </div>
+              {task.attachments && task.attachments.length > 0 ? (
+                <ul className="flex flex-col gap-2">
+                  {task.attachments.map((file) => (
+                    <li
+                      key={file._id || file.fileName}
+                      className="group flex items-center justify-between gap-3 rounded-xl bg-slate-950 border border-slate-800 p-3 hover:border-indigo-500/30 transition duration-200"
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                          <File className="w-4 h-4 text-indigo-400" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-white truncate">{file.fileName}</p>
+                          <p className="text-[10px] text-slate-500">
+                            {formatSize(file.size)}
+                          </p>
+                        </div>
+                      </div>
 
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm text-slate-200 truncate">{file.fileName}</p>
-                      <p className="text-xs text-slate-500">
-                        {formatSize(file.size)}
-                        {file.uploadedAt && ` · ${formatDate(file.uploadedAt)}`}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       {file.fileUrl && (
                         <a
                           href={`${import.meta.env.VITE_BACKEND_BASE_URL}/employee/tasks/${task._id}/attachments/${file._id}/download`}
                           download={file.fileName}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 rounded-md text-slate-400 hover:text-indigo-400 hover:bg-white/10 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-400 hover:bg-slate-800 transition"
                           aria-label={`Download ${file.fileName}`}
                         >
                           <Download className="w-4 h-4" />
                         </a>
                       )}
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteFile(file.id)}
-                        className="p-1.5 rounded-md text-slate-400 hover:text-red-400 hover:bg-white/10 transition-colors"
-                        aria-label={`Delete ${file.name}`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-white/15 px-4 py-8 text-center">
-                <FileX className="w-6 h-6 text-slate-600" />
-                <p className="text-sm text-slate-500">No files uploaded yet</p>
-              </div>
-            )}
-          </div>
-
-          <div className="w-screen ml-100 bg-red-200 max-w-md mx-auto rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-sm shadow-xl shadow-black/20 p-5 sm:p-6 text-white">
-            <h3 className="text-sm font-semibold text-slate-200 tracking-wide mb-4">
-              Upload a file
-            </h3>
-
-            <label
-              htmlFor="file-upload-input"
-              className="group flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 hover:border-indigo-400/60 hover:bg-white/[0.03] px-4 py-8 sm:py-10 cursor-pointer transition-all duration-200"
-            >
-              <div className="flex items-center justify-center w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-900/40 group-hover:scale-105 transition-transform duration-200">
-                <Upload className="w-5 h-5 text-white" />
-              </div>
-              <p className="text-sm text-slate-300 text-center">
-                <span className="text-indigo-400 font-medium">Click to browse</span> or drag a file here
-              </p>
-              <input
-                id="file-upload-input"
-                type="file"
-                onChange={handleFileChange}
-                className="sr-only"
-              />
-            </label>
-
-            <div className="mt-4 min-h-[52px]">
-              {selectedFile ? (
-                <div className="flex items-center gap-3 rounded-lg bg-white/5 border border-white/10 px-3 py-2.5">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-md bg-indigo-500/15 shrink-0">
-                    <File className="w-4 h-4 text-indigo-400" />
-                  </div>
-                  <p className="text-sm text-slate-200 truncate">{selectedFile.name}</p>
-                </div>
+                    </li>
+                  ))}
+                </ul>
               ) : (
-                <p className="text-sm text-slate-500 px-1">No file selected</p>
+                <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-800 p-6 text-center">
+                  <FileX className="w-6 h-6 text-slate-600" />
+                  <p className="text-xs text-slate-500">No attachments uploaded yet</p>
+                </div>
               )}
+
+              {/* Upload Form */}
+              <div className="pt-2 border-t border-slate-800">
+                <label
+                  htmlFor="file-upload-input"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-800 hover:border-indigo-500/50 bg-slate-950 p-4 cursor-pointer transition duration-200"
+                >
+                  <Upload className="w-5 h-5 text-indigo-400" />
+                  <p className="text-xs text-slate-400 text-center">
+                    <span className="text-indigo-400 font-semibold">Browse file</span> to attach
+                  </p>
+                  <input
+                    id="file-upload-input"
+                    type="file"
+                    onChange={handleFileChange}
+                    className="sr-only"
+                  />
+                </label>
+
+                {selectedFile && (
+                  <div className="mt-3 flex items-center justify-between gap-2 bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs">
+                    <span className="text-slate-200 truncate">{selectedFile.name}</span>
+                    <button
+                      disabled={loading}
+                      onClick={handleUpload}
+                      className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-3 py-1 rounded-lg text-xs transition"
+                    >
+                      {loading ? "..." : "Upload"}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <button
-              disabled={loading || !selectedFile}
-              onClick={handleUpload}
-              className={`mt-4 w-full inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 ${loading || !selectedFile
-                ? "bg-white/5 text-slate-500 cursor-not-allowed"
-                : "bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-500 hover:to-violet-500 shadow-lg shadow-indigo-900/30 active:scale-[0.98]"
-                }`}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Uploading...
-                </>
-              ) : (
-                "Upload"
-              )}
-            </button>
+          </div>
+
+          {/* Discussion Chat Column */}
+          <div className="lg:col-span-8">
+            <Chat />
           </div>
 
         </div>

@@ -1,21 +1,26 @@
 import Project from "../models/Project.Model.js";
 import Task from "../models/Task.Model.js";
-import User from "../models/User.Model.js";
+import User from "../models/User.model.js";
 
 export const createProject = async (
   req,
   res
 ) => {
   try {    
-    const user = await User.findById(req.user.id)
-    const companyId = user.company.toString();
-    console.log("I want this : ",companyId);
-    
-      await Project.create({
-        ...req.body,
-        createdBy: req.user.id,
-        company: companyId
+    const user = await User.findById(req.user.id);
+    if (!user || !user.company) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not belong to a valid company",
       });
+    }
+    const companyId = user.company.toString();
+
+    const project = await Project.create({
+      ...req.body,
+      createdBy: req.user.id,
+      company: companyId,
+    });
 
     res.status(201).json({
       success: true,

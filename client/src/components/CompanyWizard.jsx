@@ -1,398 +1,397 @@
-import React, { useState } from 'react';
-import { setUpCompany } from '../redux/adminSlice';
-import { useDispatch } from 'react-redux';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { setUpCompany } from "../redux/adminSlice";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { Building2, Upload, CheckCircle2, ChevronRight, ChevronLeft, Shield, Globe, Users, Lock, Image as ImageIcon } from "lucide-react";
 
 const CompanyWizard = () => {
-    
-    
- const navigate = useNavigate()
-    const [currentStep, setCurrentStep] = useState(1);
-    const dispatch = useDispatch()
-    const [formData, setFormData] = useState({
-        // Step 1
-        companyLogo: null,
-        companyName: 'Webvault Ltd',
-        legalName: 'webbv',
-        industry: 'tech',
-        foundedYear: '1980',
-        // Step 2
-        website: '',
-        businessEmail: 'rohitmk@gmail.com',
-        phoneNumber: '9915011474',
-        // Step 3
-        companySize: '1-10',
-        currency: 'USD',
-        timezone: 'UTC-11:00',
-        loginName: '',
-        loginEmail: '',
-        loginPassword: '',
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    // Step 1
+    companyLogo: null,
+    companyName: "",
+    legalName: "",
+    industry: "",
+    foundedYear: "",
+    // Step 2
+    website: "",
+    businessEmail: "",
+    phoneNumber: "",
+    // Step 3
+    companySize: "1-10",
+    currency: "USD",
+    timezone: "UTC+05:30",
+    // Step 4
+    loginName: "",
+    loginEmail: "",
+    loginPassword: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  const totalSteps = 4;
+
+  const fields = {
+    step1: [
+      { id: "companyName", label: "Company Name", type: "text", required: true, placeholder: "Acme Inc." },
+      { id: "legalName", label: "Legal Registered Name", type: "text", required: false, placeholder: "Acme Corporation LLC" },
+      { id: "industry", label: "Industry Sector", type: "text", required: true, placeholder: "Software & Technology" },
+      { id: "foundedYear", label: "Founded Year", type: "number", required: false, placeholder: "2024" },
+    ],
+    step2: [
+      { id: "website", label: "Company Website", type: "url", required: false, placeholder: "https://acme.com" },
+      { id: "businessEmail", label: "Official Business Email", type: "email", required: true, placeholder: "contact@acme.com" },
+      { id: "phoneNumber", label: "Contact Phone Number", type: "tel", required: false, placeholder: "+1 (555) 000-0000" },
+    ],
+    step3: [
+      { id: "companySize", label: "Company Size", type: "select", required: true, options: ["1-10", "11-50", "51-200", "201-500", "500+"] },
+      { id: "currency", label: "Default Currency", type: "select", required: true, options: ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "INR"] },
+      { id: "timezone", label: "Primary Timezone", type: "select", required: true, options: ["UTC-08:00", "UTC-05:00", "UTC+00:00", "UTC+01:00", "UTC+05:30", "UTC+08:00", "UTC+09:00"] },
+    ],
+    step4: [
+      { id: "loginName", label: "Admin Full Name", type: "text", required: true, placeholder: "John Doe" },
+      { id: "loginEmail", label: "Admin Login Email", type: "email", required: true, placeholder: "admin@acme.com" },
+      { id: "loginPassword", label: "Admin Password", type: "password", required: true, placeholder: "••••••••" },
+    ],
+  };
+
+  const getStepFields = (step) => {
+    if (step === 1) return fields.step1;
+    if (step === 2) return fields.step2;
+    if (step === 3) return fields.step3;
+    return fields.step4;
+  };
+
+  const handleChange = (e) => {
+    const { id, value, type, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: type === "file" ? files[0] : value,
+    }));
+    if (errors[id]) {
+      setErrors((prev) => ({ ...prev, [id]: "" }));
+    }
+  };
+
+  const validateStep = (step) => {
+    const stepFields = getStepFields(step);
+    const newErrors = {};
+    let isValid = true;
+
+    stepFields.forEach((field) => {
+      if (field.required) {
+        const value = formData[field.id];
+        if (!value || (typeof value === "string" && value.trim() === "")) {
+          newErrors[field.id] = `${field.label} is required`;
+          isValid = false;
+        }
+        if (field.type === "email" && value && !/\S+@\S+\.\S+/.test(value)) {
+          newErrors[field.id] = "Enter a valid email address";
+          isValid = false;
+        }
+        if (field.type === "url" && value && !/^https?:\/\/.+/.test(value)) {
+          newErrors[field.id] = "Enter a valid URL starting with http:// or https://";
+          isValid = false;
+        }
+      }
     });
 
-    const [errors, setErrors] = useState({});
+    setErrors(newErrors);
+    return isValid;
+  };
 
-    const totalSteps = 4;
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      if (currentStep < totalSteps) {
+        setCurrentStep(currentStep + 1);
+      }
+    }
+  };
 
-    // Field definitions with required/optional status
-    const fields = {
-        step1: [
-            { id: 'companyLogo', label: 'Company Logo', type: 'file', required: false },
-            { id: 'companyName', label: 'Company Name', type: 'text', required: true },
-            { id: 'legalName', label: 'Legal Name', type: 'text', required: false },
-            { id: 'industry', label: 'Industry', type: 'text', required: true },
-            { id: 'foundedYear', label: 'Founded Year', type: 'number', required: false },
-        ],
-        step2: [
-            { id: 'website', label: 'Website', type: 'url', required: false },
-            { id: 'businessEmail', label: 'Business Email', type: 'email', required: true },
-            { id: 'phoneNumber', label: 'Phone Number', type: 'tel', required: false },
-        ],
-        step3: [
-            { id: 'companySize', label: 'Company Size', type: 'select', required: true, options: ['1-10', '11-50', '51-200', '201-500', '500+'] },
-            { id: 'currency', label: 'Currency', type: 'select', required: true, options: ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'JPY'] },
-            { id: 'timezone', label: 'Timezone', type: 'select', required: true, options: ['UTC-12:00', 'UTC-11:00', 'UTC-10:00', 'UTC-09:00', 'UTC-08:00', 'UTC-07:00', 'UTC-06:00', 'UTC-05:00', 'UTC-04:00', 'UTC-03:00', 'UTC-02:00', 'UTC-01:00', 'UTC+00:00', 'UTC+01:00', 'UTC+02:00', 'UTC+03:00', 'UTC+04:00', 'UTC+05:00', 'UTC+06:00', 'UTC+07:00', 'UTC+08:00', 'UTC+09:00', 'UTC+10:00', 'UTC+11:00', 'UTC+12:00'] },
-        ],
-        step4: [
-            { id: 'loginName', label: 'Enter Your Name', type: 'text', required: true, },
-            { id: 'loginEmail', label: 'Setup Login Email', type: 'email', required: true, },
-            { id: 'loginPassword', label: 'Set Password', type: 'password', required: true },
-        ],
+  const handleBack = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateStep(currentStep)) return;
+
+    setLoading(true);
+    const newFormData = {
+      name: formData.companyName,
+      legalName: formData.legalName,
+      website: formData.website,
+      email: formData.businessEmail,
+      phone: formData.phoneNumber,
+      logo: formData.companyLogo,
+      industry: formData.industry,
+      companySize: formData.companySize,
+      foundedYear: formData.foundedYear,
+      currency: formData.currency,
+      timezone: formData.timezone,
+      loginEmail: formData.loginEmail,
+      loginPassword: formData.loginPassword,
+      loginName: formData.loginName,
     };
 
-    const getStepFields = (step) => {
-        if (step === 1) return fields.step1;
-        if (step === 2) return fields.step2;
-        if (step === 3) return fields.step3;
-        return fields.step4;
+    const success = await dispatch(setUpCompany(newFormData));
+    setLoading(false);
+    if (success) {
+      navigate("/");
+    }
+  };
+
+  const getStepTitle = (step) => {
+    const titles = {
+      1: "Organization Details",
+      2: "Contact Information",
+      3: "Regional Preferences",
+      4: "Admin Account Setup",
     };
+    return titles[step];
+  };
 
-    const handleChange = (e) => {
-        const { id, value, type, files } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [id]: type === 'file' ? files[0] : value,
-        }));
-        // Clear error for this field
-        if (errors[id]) {
-            setErrors((prev) => ({ ...prev, [id]: '' }));
-        }
+  const getStepSubtitle = (step) => {
+    const subtitles = {
+      1: "Step 1 of 4: Enter basic company info and upload logo",
+      2: "Step 2 of 4: Enter official email and website links",
+      3: "Step 3 of 4: Configure company size, currency, and timezone",
+      4: "Step 4 of 4: Set up administrator account credentials",
     };
+    return subtitles[step];
+  };
 
-    const validateStep = (step) => {
-        const stepFields = getStepFields(step);
-        const newErrors = {};
-        let isValid = true;
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 sm:p-6 font-sans">
+      <div className="w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden">
+        {/* Header */}
+        <div className="px-6 sm:px-8 pt-8 pb-6 border-b border-slate-800 bg-slate-900/90">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <Building2 size={20} />
+              </span>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                {getStepTitle(currentStep)}
+              </h1>
+            </div>
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1 rounded-full">
+              Step {currentStep} / {totalSteps}
+            </span>
+          </div>
+          <p className="text-slate-400 text-xs mt-1">{getStepSubtitle(currentStep)}</p>
+        </div>
 
-        stepFields.forEach((field) => {
-            if (field.required) {
-                const value = formData[field.id];
-                if (!value || (typeof value === 'string' && value.trim() === '')) {
-                    newErrors[field.id] = `${field.label} is required`;
-                    isValid = false;
-                }
-                // Email validation
-                if (field.type === 'email' && value && !/\S+@\S+\.\S+/.test(value)) {
-                    newErrors[field.id] = 'Please enter a valid email address';
-                    isValid = false;
-                }
-                // URL validation
-                if (field.type === 'url' && value && !/^https?:\/\/.+/.test(value)) {
-                    newErrors[field.id] = 'Please enter a valid URL (e.g., https://example.com)';
-                    isValid = false;
-                }
-            }
-        });
+        {/* Step Progress Pills */}
+        <div className="px-6 sm:px-8 pt-6 pb-4 bg-slate-950/40 border-b border-slate-800">
+          <div className="flex items-center justify-between relative">
+            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-slate-800 rounded-full z-0" />
+            <div
+              className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-indigo-600 rounded-full transition-all duration-300 z-0"
+              style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
+            />
 
-        setErrors(newErrors);
-        return isValid;
-    };
-
-    const handleNext = () => {
-        if (validateStep(currentStep)) {
-            if (currentStep < totalSteps) {
-                setCurrentStep(currentStep + 1);
-            }
-        }
-    };
-
-    const handleBack = () => {
-        if (currentStep > 1) {
-            setCurrentStep(currentStep - 1);
-        }
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (validateStep(currentStep)) {
-            // All steps validated, submit the form
-            console.log('Form submitted:', formData);
-            const newFormData = {
-                    name: formData.companyName,
-                    legalName: formData.legalName,
-                    website: formData.website,
-                    email: formData.businessEmail,
-                    phone: formData.phoneNumber,
-                    logo: formData.companyLogo,
-                    industry: formData.industry,
-                    companySize: formData.companySize,
-                    foundedYear: formData.foundedYear,
-                    currency: formData.currency,
-                    timezone: formData.timezone,
-                    loginEmail: formData.loginEmail,
-                    loginPassword: formData.loginPassword,
-                    loginName: formData.loginName,
-}
-dispatch(setUpCompany(newFormData,dispatch))
-navigate("/")
-console.log(newFormData);
-
-            
-            console.log('Company created successfully! 🎉');
-        }
-    };
-
-    const getStepTitle = (step) => {
-        const titles = {
-            1: 'Basic Information',
-            2: 'Contact Details',
-            3: 'Organization Settings',
-        };
-        return titles[step];
-    };
-
-    const getStepSubtitle = (step) => {
-        const subtitles = {
-            1: 'Create Company',
-            2: 'Contact Details',
-            3: 'Organization Settings',
-        };
-        return subtitles[step];
-    };
-
-    const renderField = (field) => {
-        const value = formData[field.id];
-        const error = errors[field.id];
-        const isRequired = field.required;
-
-        const baseInputClass = `w-full px-4 py-2.5 rounded-xl border ${error ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-white'} focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-800 placeholder-gray-400`;
-
-        if (field.type === 'select') {
-            return (
-                <div key={field.id} className="space-y-1.5">
-                    <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
-                        {field.label}
-                        {isRequired && <span className="text-red-500 ml-1">*</span>}
-                    </label>
-                    <select
-                        id={field.id}
-                        value={value || ''}
-                        onChange={handleChange}
-                        className={baseInputClass}
-                    >
-                        <option value="">Select {field.label}</option>
-                        {field.options.map((opt) => (
-                            <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                    </select>
-                    {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+            {[1, 2, 3, 4].map((step) => {
+              const isActive = step === currentStep;
+              const isCompleted = step < currentStep;
+              return (
+                <div key={step} className="relative z-10 flex flex-col items-center">
+                  <div
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs transition-all duration-200 ${
+                      isActive
+                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30 border border-indigo-400 scale-110"
+                        : isCompleted
+                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                        : "bg-slate-900 text-slate-500 border border-slate-800"
+                    }`}
+                  >
+                    {isCompleted ? <CheckCircle2 size={16} /> : step}
+                  </div>
+                  <span className={`text-[10px] uppercase font-semibold mt-1.5 ${isActive ? "text-indigo-400" : "text-slate-500"}`}>
+                    {step === 1 ? "Basic" : step === 2 ? "Contact" : step === 3 ? "Config" : "Admin"}
+                  </span>
                 </div>
-            );
-        }
+              );
+            })}
+          </div>
+        </div>
 
-        if (field.type === 'file') {
-            return (
-                <div key={field.id} className="space-y-1.5">
-                    <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
-                        {field.label}
-                    </label>
-                    <div className="flex items-center gap-4">
-                        <div className="flex-1">
-                            <input
-                                id={field.id}
-                                type="file"
-                                accept="image/*"
-                                onChange={handleChange}
-                                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-50 file:text-indigo-700 file:text-sm file:font-medium hover:file:bg-indigo-100"
-                            />
-                        </div>
-                        {formData.companyLogo && (
-                            <div className="w-14 h-14 rounded-xl border-2 border-gray-200 overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
-                                <img
-                                    src={URL.createObjectURL(formData.companyLogo)}
-                                    alt="Company logo preview"
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        }
-
-        return (
-            <div key={field.id} className="space-y-1.5">
-                <label htmlFor={field.id} className="block text-sm font-medium text-gray-700">
-                    {field.label}
-                    {isRequired && <span className="text-red-500 ml-1">*</span>}
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="px-6 sm:px-8 py-6 space-y-5">
+          {currentStep === 1 && (
+            <div className="space-y-4">
+              {/* Logo Upload Box */}
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">
+                  Company Logo
                 </label>
-                <input
+                <div className="flex items-center gap-4 p-4 bg-slate-950 border border-slate-800 rounded-2xl">
+                  <div className="w-16 h-16 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {formData.companyLogo ? (
+                      <img
+                        src={URL.createObjectURL(formData.companyLogo)}
+                        alt="Logo preview"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <ImageIcon className="text-slate-600" size={24} />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <label
+                      htmlFor="companyLogo"
+                      className="inline-flex items-center gap-2 px-3.5 py-2 bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-400 border border-indigo-500/20 text-xs font-semibold rounded-xl cursor-pointer transition"
+                    >
+                      <Upload size={14} />
+                      {formData.companyLogo ? "Change Logo" : "Upload Logo Image"}
+                    </label>
+                    <input
+                      id="companyLogo"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleChange}
+                      className="hidden"
+                    />
+                    <p className="text-[11px] text-slate-500 mt-1">PNG, JPG, or WEBP up to 5MB</p>
+                  </div>
+                </div>
+              </div>
+
+              {fields.step1.map((field) => (
+                <div key={field.id}>
+                  <label htmlFor={field.id} className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    {field.label} {field.required && <span className="text-rose-400">*</span>}
+                  </label>
+                  <input
                     id={field.id}
                     type={field.type}
-                    value={value || ''}
+                    value={formData[field.id] || ""}
                     onChange={handleChange}
-                    placeholder={`Enter ${field.label}`}
-                    className={baseInputClass}
-                />
-                {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+                    placeholder={field.placeholder}
+                    className={`w-full bg-slate-950 border rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition ${
+                      errors[field.id] ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20" : "border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                    }`}
+                  />
+                  {errors[field.id] && <p className="text-xs text-rose-400 mt-1 font-medium">{errors[field.id]}</p>}
+                </div>
+              ))}
             </div>
-        );
-    };
+          )}
 
-    // Get all required and optional fields for the summary
-    const allFields = [...fields.step1, ...fields.step2, ...fields.step3];
-    const requiredFields = allFields.filter(f => f.required).map(f => f.label);
-    const optionalFields = allFields.filter(f => !f.required).map(f => f.label);
-
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center p-4 sm:p-6">
-            <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl shadow-indigo-100/50 border border-gray-100 overflow-hidden">
-                {/* Header */}
-                <div className="px-6 sm:px-8 pt-8 pb-6 border-b border-gray-100 bg-white/50 backdrop-blur-sm">
-                    <div className="flex items-center justify-between mb-2">
-                        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                            {getStepTitle(currentStep)}
-                        </h1>
-                        <span className="text-sm font-medium text-gray-400 bg-gray-50 px-3 py-1 rounded-full">
-                            Step {currentStep} of {totalSteps}
-                        </span>
-                    </div>
-                    <p className="text-gray-500 text-sm">
-                        {getStepSubtitle(currentStep)}
-                    </p>
+          {currentStep === 2 && (
+            <div className="space-y-4">
+              {fields.step2.map((field) => (
+                <div key={field.id}>
+                  <label htmlFor={field.id} className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    {field.label} {field.required && <span className="text-rose-400">*</span>}
+                  </label>
+                  <input
+                    id={field.id}
+                    type={field.type}
+                    value={formData[field.id] || ""}
+                    onChange={handleChange}
+                    placeholder={field.placeholder}
+                    className={`w-full bg-slate-950 border rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition ${
+                      errors[field.id] ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20" : "border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                    }`}
+                  />
+                  {errors[field.id] && <p className="text-xs text-rose-400 mt-1 font-medium">{errors[field.id]}</p>}
                 </div>
-
-                {/* Progress Bar */}
-                <div className="px-6 sm:px-8 pt-6 pb-4">
-                    <div className="relative flex items-center justify-between">
-                        {/* Background line */}
-                        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-gray-200 rounded-full">
-                            <div
-                                className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500 ease-out"
-                                style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
-                            />
-                        </div>
-
-                        {/* Step indicators */}
-                        {[1, 2, 3].map((step) => {
-                            const isActive = step === currentStep;
-                            const isCompleted = step < currentStep;
-                            return (
-                                <div key={step} className="relative flex flex-col items-center">
-                                    <div
-                                        className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-300 z-10
-                                            ${isActive
-                                                ? 'border-indigo-500 bg-indigo-500 text-white shadow-lg shadow-indigo-200 scale-110'
-                                                : isCompleted
-                                                    ? 'border-indigo-500 bg-indigo-100 text-indigo-600'
-                                                    : 'border-gray-300 bg-white text-gray-400'
-                                            }`}
-                                    >
-                                        {isCompleted ? (
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                        ) : (
-                                            <span className="text-sm font-semibold">{step}</span>
-                                        )}
-                                    </div>
-                                    <span className={`text-xs mt-2 font-medium transition-colors duration-200 ${isActive ? 'text-indigo-600' : 'text-gray-400'}`}>
-                                        {step === 1 ? 'Basic' : step === 2 ? 'Contact' : 'Settings'}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="px-6 sm:px-8 py-4">
-                    <div className="space-y-5">
-                        {getStepFields(currentStep).map((field) => renderField(field))}
-                    </div>
-
-                    {/* Navigation Buttons */}
-                    <div className={`flex items-center gap-3 mt-8 pt-6 border-t border-gray-100 ${currentStep === 1 ? 'justify-end' : 'justify-between'}`}>
-                        {currentStep > 1 && (
-                            <button
-                                type="button"
-                                onClick={handleBack}
-                                className="px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 flex items-center gap-2"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                                </svg>
-                                Back
-                            </button>
-                        )}
-
-                        {currentStep < totalSteps ? (
-                            <button
-                                type="button"
-                                onClick={handleNext}
-                                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:from-indigo-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-                            >
-                                Next
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
-                        ) : (
-                            <button
-                                type="submit"
-                                className="px-8 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-medium hover:from-emerald-600 hover:to-teal-700 shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                Create Company
-                            </button>
-                        )}
-                    </div>
-                </form>
-
-                {/* Footer - Required/Optional summary */}
-                <div className="px-6 sm:px-8 py-4 bg-gray-50/80 border-t border-gray-100">
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-gray-500">
-                        <div className="flex items-center gap-2">
-                            <span className="text-red-500 font-bold">*</span>
-                            <span>Required ({requiredFields.length})</span>
-                            <span className="text-gray-300">|</span>
-                            <span className="flex flex-wrap gap-1">
-                                {requiredFields.map((f, i) => (
-                                    <span key={i} className="inline-flex items-center px-2 py-0.5 rounded-full bg-red-50 text-red-600 text-xs font-medium">
-                                        {f}
-                                    </span>
-                                ))}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-gray-400">○</span>
-                            <span>Optional ({optionalFields.length})</span>
-                            <span className="text-gray-300">|</span>
-                            <span className="flex flex-wrap gap-1">
-                                {optionalFields.map((f, i) => (
-                                    <span key={i} className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 text-xs font-medium">
-                                        {f}
-                                    </span>
-                                ))}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+              ))}
             </div>
-        </div>
-    );
+          )}
+
+          {currentStep === 3 && (
+            <div className="space-y-4">
+              {fields.step3.map((field) => (
+                <div key={field.id}>
+                  <label htmlFor={field.id} className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    {field.label} {field.required && <span className="text-rose-400">*</span>}
+                  </label>
+                  <select
+                    id={field.id}
+                    value={formData[field.id] || ""}
+                    onChange={handleChange}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+                  >
+                    {field.options.map((opt) => (
+                      <option key={opt} value={opt} className="bg-slate-900 text-slate-100">
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {currentStep === 4 && (
+            <div className="space-y-4">
+              {fields.step4.map((field) => (
+                <div key={field.id}>
+                  <label htmlFor={field.id} className="block text-xs font-semibold text-slate-300 mb-1.5">
+                    {field.label} {field.required && <span className="text-rose-400">*</span>}
+                  </label>
+                  <input
+                    id={field.id}
+                    type={field.type}
+                    value={formData[field.id] || ""}
+                    onChange={handleChange}
+                    placeholder={field.placeholder}
+                    className={`w-full bg-slate-950 border rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 outline-none transition ${
+                      errors[field.id] ? "border-rose-500 focus:ring-2 focus:ring-rose-500/20" : "border-slate-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                    }`}
+                  />
+                  {errors[field.id] && <p className="text-xs text-rose-400 mt-1 font-medium">{errors[field.id]}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-between pt-6 border-t border-slate-800">
+            {currentStep > 1 ? (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-950 text-slate-300 hover:text-white text-xs font-semibold transition"
+              >
+                <ChevronLeft size={16} />
+                Back
+              </button>
+            ) : (
+              <div />
+            )}
+
+            {currentStep < totalSteps ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition shadow-lg shadow-indigo-600/20"
+              >
+                Next Step
+                <ChevronRight size={16} />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading}
+                className="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-bold transition shadow-lg shadow-emerald-600/20"
+              >
+                {loading ? "Creating Company..." : "Complete Setup & Launch"}
+                <CheckCircle2 size={16} />
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default CompanyWizard;

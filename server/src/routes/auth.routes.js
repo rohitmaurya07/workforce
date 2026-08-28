@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getMyProfile, googleLogin, login, logout, register, updateProfile } from "../controllers/auth.controllers.js";
+import { forgotPassword, getMyProfile, googleLogin, login, logout, register, resetPassword, updateProfile } from "../controllers/auth.controllers.js";
 import auth from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.js";
 const router = Router()
@@ -8,6 +8,8 @@ const router = Router()
 router.post("/google", googleLogin);
 router.post("/register", register);
 router.post("/login", login);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 router.get("/logout", logout);
 router.patch("/update", auth,upload.single("avatar"),updateProfile);
 router.get(
