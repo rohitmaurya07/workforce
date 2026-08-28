@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import cloudinary from "../middlewares/cloudinary.js";
 import Company from "../models/Company.Model.js";
-import User from "../models/User.model.js";
+import User from "../models/User.Model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
