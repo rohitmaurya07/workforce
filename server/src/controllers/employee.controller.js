@@ -1,4 +1,4 @@
-import User from "../models/User.model.js";
+import User from "../models/User.Model.js";
 import Task from "../models/Task.Model.js";
 import {Comment} from "../models/Comment.model.js";
 
