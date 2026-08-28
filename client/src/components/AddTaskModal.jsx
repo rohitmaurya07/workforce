@@ -411,15 +411,14 @@ const AddTaskModal = ({ onClose }) => {
               {/* Project + Assign */}
               <div className="atm-row">
                 <div className="atm-field">
-                  <label className="atm-label">Project</label>
+                  <label className="atm-label">Project (Optional)</label>
                   <select
                     className="atm-select"
                     name="projectId"
                     value={formData.projectId}
                     onChange={handleChange}
-                    required
                   >
-                    <option value="">Select project</option>
+                    <option value="">No Project (General Task)</option>
                     {projects.map((p) => (
                       <option key={p._id} value={p._id}>{p.name}</option>
                     ))}

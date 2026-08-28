@@ -247,7 +247,9 @@ function ProfileSection(user) {
     data.append("name", form.name);
     data.append("phone", form.phone);
     data.append("dob", form.dob);
-    data.append("gender", form.gender);
+    if (form.gender) {
+      data.append("gender", form.gender);
+    }
     data.append("address", form.address);
     data.append("emergencyContact", form.emergencyContact);
 

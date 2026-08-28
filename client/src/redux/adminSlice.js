@@ -227,6 +227,26 @@ export const addEmployee = (employee) => async (dispatch, getState) => {
   }
 };
 
+// Update Employee Details By Admin
+export const updateEmployeeByAdmin = (id, updateData) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    const { data } = await axiosInstance.patch(`/admin/users/${id}`, updateData);
+    if (data.success) {
+      toast.success(data.message || "Employee updated successfully");
+      dispatch(getUserDetailsById(id));
+      dispatch(getAllUsers());
+      return true;
+    }
+    return false;
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Failed to update employee");
+    return false;
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
 
 // Create New Task
 export const createTask =

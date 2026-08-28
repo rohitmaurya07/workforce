@@ -180,3 +180,46 @@ export const toggleEmployeeAccountStatus = async (req, res) => {
     });
   }
 };
+
+// Update Employee Details as Admin
+export const updateEmployeeDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, role, department, designation, phone, isActive, isVerified } = req.body;
+
+    const updates = {};
+    if (name !== undefined) updates.name = name;
+    if (email !== undefined) updates.email = email;
+    if (role !== undefined) updates.role = role;
+    if (department !== undefined) updates.department = department;
+    if (designation !== undefined) updates.designation = designation;
+    if (phone !== undefined) updates.phone = phone;
+    if (isActive !== undefined) updates.isActive = isActive;
+    if (isVerified !== undefined) updates.isVerified = isVerified;
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Employee details updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("updateEmployeeDetails Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update employee details",
+    });
+  }
+};

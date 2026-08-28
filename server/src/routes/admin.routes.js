@@ -6,9 +6,9 @@ import { createTask, deleteTask, getAllTasks } from "../controllers/task.control
 import { employeePerformance } from "../controllers/report.controller.js";
 import auth from "../middlewares/auth.middleware.js";
 import allowRoles from "../middlewares/role.middleware.js";
-import { addEmployee, deleteUserById, getUserById, toggleEmployeeAccountStatus } from "../controllers/admin.controllers.js";
-const router  = Router()
+import { addEmployee, deleteUserById, getUserById, toggleEmployeeAccountStatus, updateEmployeeDetails } from "../controllers/admin.controllers.js";
 
+const router  = Router()
 
 router.use(auth);
 router.use(
@@ -28,6 +28,11 @@ router.get(
 router.patch(
   "/users/:id/role",
   updateUserRole
+);
+
+router.patch(
+  "/users/:id",
+  updateEmployeeDetails
 );
 
 router.post(

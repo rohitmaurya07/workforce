@@ -1,7 +1,152 @@
 import { useEffect, useState } from "react";
-import { getUserDetailsById } from "../redux/adminSlice";
+import { getUserDetailsById, updateEmployeeByAdmin } from "../redux/adminSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
+import { Edit3 } from "lucide-react";
+
+function EditEmployeeModal({ employee, onClose, onSave }) {
+  const [formData, setFormData] = useState({
+    name: employee?.name || "",
+    email: employee?.email || "",
+    role: employee?.role || "employee",
+    department: employee?.department || "",
+    designation: employee?.designation || "",
+    phone: employee?.phone || "",
+    isActive: employee?.isActive !== false,
+    isVerified: employee?.isVerified || false,
+  });
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    await onSave(formData);
+    setSaving(false);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 text-slate-100 font-sans">
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-5">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <Edit3 size={18} className="text-indigo-400" /> Edit Employee Details
+          </h2>
+          <button onClick={onClose} className="text-slate-400 hover:text-white p-1 text-lg">×</button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+          <div>
+            <label className="block text-slate-300 font-semibold mb-1">Full Name</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-slate-100 text-sm outline-none focus:border-indigo-500"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-slate-300 font-semibold mb-1">Email Address</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-slate-100 text-sm outline-none focus:border-indigo-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-slate-300 font-semibold mb-1">System Role</label>
+              <select
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-slate-100 text-sm outline-none focus:border-indigo-500 cursor-pointer"
+              >
+                <option value="employee">Employee</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-slate-300 font-semibold mb-1">Department</label>
+              <input
+                type="text"
+                value={formData.department}
+                onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-slate-100 text-sm outline-none focus:border-indigo-500"
+                placeholder="Engineering, Sales, etc."
+              />
+            </div>
+            <div>
+              <label className="block text-slate-300 font-semibold mb-1">Designation / Title</label>
+              <input
+                type="text"
+                value={formData.designation}
+                onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-slate-100 text-sm outline-none focus:border-indigo-500"
+                placeholder="Software Engineer, Manager"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-slate-300 font-semibold mb-1">Phone Number</label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-slate-100 text-sm outline-none focus:border-indigo-500"
+              placeholder="+1 (555) 000-0000"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <label className="flex items-center gap-2 p-3 bg-slate-950 rounded-xl border border-slate-800 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                className="accent-indigo-600 rounded"
+              />
+              <span className="font-semibold text-slate-200">Account Active</span>
+            </label>
+            <label className="flex items-center gap-2 p-3 bg-slate-950 rounded-xl border border-slate-800 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.isVerified}
+                onChange={(e) => setFormData({ ...formData, isVerified: e.target.checked })}
+                className="accent-indigo-600 rounded"
+              />
+              <span className="font-semibold text-slate-200">Email Verified</span>
+            </label>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/20"
+            >
+              {saving ? "Saving..." : "Save Details"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 
 
@@ -102,8 +247,9 @@ const ProgressBar = ({ value, max, color }) => (
 //  Main Page 
 const UserDetail = ({ stats = MOCK_STATS, tasks = MOCK_RECENT_TASKS, onBack }) => {
   const [activeTab, setActiveTab] = useState("overview");
-  const {id} = useParams()
-const dispatch = useDispatch()
+  const [showEditModal, setShowEditModal] = useState(false);
+  const {id} = useParams();
+  const dispatch = useDispatch();
   const completionRate = Math.round((stats.tasksCompleted / stats.tasksAssigned) * 100);
   const {employee,loading} = useSelector((state)=>state.admin)
   useEffect(() => {
@@ -395,27 +541,23 @@ const dispatch = useDispatch()
           </Link>
 
           <div className="ud-topbar-actions">
-            {/* <button className="ud-action-btn danger">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 6 6 18M6 6l12 12"/>
-              </svg>
-              Remove
-            </button> */}
-            {/* <button className="ud-action-btn">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/>
-              </svg>
-              Edit
+            <button
+              onClick={() => setShowEditModal(true)}
+              className="ud-action-btn primary"
+            >
+              <Edit3 size={14} />
+              Edit Employee Details
             </button>
-            <button className="ud-action-btn primary">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 5v14M5 12h14"/>
-              </svg>
-              Assign Task
-            </button> */}
           </div>
         </div>
+
+        {showEditModal && (
+          <EditEmployeeModal
+            employee={employee}
+            onClose={() => setShowEditModal(false)}
+            onSave={(updatedData) => dispatch(updateEmployeeByAdmin(id, updatedData))}
+          />
+        )}
 
         {/* ── Hero ── */}
         <div className="ud-hero">
@@ -722,9 +864,9 @@ const dispatch = useDispatch()
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
                 {[
-                  { k: "User ID",      v: employee?._id },
-                  { k: "Created At",   v: employee?.createdAt.toISOString() },
-                  { k: "Updated At",   v: employee?.updatedAt.toISOString() },
+                  { k: "User ID",      v: employee?._id || "—" },
+                  { k: "Created At",   v: employee?.createdAt ? new Date(employee.createdAt).toISOString() : "—" },
+                  { k: "Updated At",   v: employee?.updatedAt ? new Date(employee.updatedAt).toISOString() : "—" },
                 ].map(({ k, v }) => (
                   <div key={k}>
                     <div style={{ fontSize: 11, color: "#475569", textTransform: "uppercase", letterSpacing: "0.4px", marginBottom: 4 }}>{k}</div>

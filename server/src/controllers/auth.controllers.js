@@ -358,6 +358,7 @@ export const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id || req.user._id;
     const updates = {};
+    const unset = {};
 
     const allowedFields = [
       "name",
@@ -378,7 +379,11 @@ export const updateProfile = async (req, res) => {
 
     allowedFields.forEach((field) => {
       if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
+        if (field === "gender" && req.body[field].trim() === "") {
+          unset[field] = 1;
+        } else {
+          updates[field] = req.body[field];
+        }
       }
     });
 
@@ -405,7 +410,7 @@ export const updateProfile = async (req, res) => {
 
     const user = await User.findByIdAndUpdate(
       userId,
-      { $set: updates },
+      { $set: updates, ...(Object.keys(unset).length ? { $unset: unset } : {}) },
       {
         new: true,
         runValidators: true,

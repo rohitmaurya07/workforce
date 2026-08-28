@@ -9,18 +9,23 @@ export const createTask = async (
   try {
     const user = await User.findById(req.user.id)
         const companyId = user.company.toString();
-    const task =
-      await Task.create({
-        ...req.body,
-        assignedBy:
-          req.user.id,
-          company: companyId
-      });
+    const taskData = {
+      ...req.body,
+      assignedBy: req.user.id,
+      company: companyId,
+    };
+    if (!taskData.projectId) {
+      delete taskData.projectId;
+    }
 
-      // Add task id to project's tasks array
-    await ProjectModel.findByIdAndUpdate(req.body.projectId, {
-      $push: { tasks: task._id },
-    });
+    const task = await Task.create(taskData);
+
+    // Add task id to project's tasks array if project exists
+    if (req.body.projectId) {
+      await ProjectModel.findByIdAndUpdate(req.body.projectId, {
+        $push: { tasks: task._id },
+      });
+    }
     await User.findByIdAndUpdate(req.body.assignedTo, {
       $push: { tasks: task._id },
     });

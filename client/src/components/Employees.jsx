@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteUserById, getAllUsers, toogleAccountStatus } from "../redux/adminSlice";
+import { deleteUserById, getAllUsers, toogleAccountStatus, updateEmployeeByAdmin } from "../redux/adminSlice";
 import AddEmployeeModal from "./AddEmployeeModal";
 import { Link } from "react-router-dom";
-import { Search, UserPlus, Shield, User, Mail, Building2, Trash2, Eye } from "lucide-react";
+import { Search, UserPlus, Shield, User, Mail, Building2, Trash2, Eye, Edit3 } from "lucide-react";
 
 const Employees = () => {
   const dispatch = useDispatch();
