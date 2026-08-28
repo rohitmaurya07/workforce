@@ -1,6 +1,6 @@
 import User from "../models/User.Model.js";
 import Task from "../models/Task.Model.js";
-import {Comment} from "../models/Comment.model.js";
+import {Comment} from "../models/Comment.Model.js";
 
 
 export const getMyTasks = async (req, res) => {
