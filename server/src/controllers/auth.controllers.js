@@ -48,8 +48,8 @@ export const register = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT,
+      sameSite: process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -119,8 +119,8 @@ export const login = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT,
+      sameSite: process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -205,8 +205,8 @@ export const googleLogin = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT,
+      sameSite: process.env.NODE_ENV === "production" || !!process.env.RAILWAY_ENVIRONMENT ? "none" : "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 

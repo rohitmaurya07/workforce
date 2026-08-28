@@ -40,6 +40,7 @@ export const googleLogin =
       );
 
       if (data.success) {
+        if (data.token) localStorage.setItem("token", data.token);
         dispatch(setUser(data.user));
         return true;
       }
@@ -72,6 +73,7 @@ export const register =
         );
 
       if (data.success) {
+        if (data.token) localStorage.setItem("token", data.token);
         dispatch(setUser(data.user));
         toast.success(data.message || "Registered successfully!");
         return true;
@@ -101,6 +103,7 @@ export const login =
       );
       
       if (data.success) {
+        if (data.token) localStorage.setItem("token", data.token);
         dispatch(setUser(data.user));
         toast.success(data.message || "Login successful");
         return true;
@@ -123,6 +126,7 @@ export const joinCompany = (companyId) => async (dispatch) => {
   try {
     const { data } = await axiosInstance.post("/company/join", { companyId });
     if (data.success) {
+      if (data.token) localStorage.setItem("token", data.token);
       dispatch(setUser(data.user));
       toast.success(data.message || "Joined company successfully!");
       return true;
@@ -145,10 +149,11 @@ export const logout =
       await axiosInstance.get(
         "/auth/logout"
       );
-
+      localStorage.removeItem("token");
       dispatch(setUser(null));
       toast.success("Logged out successfully");
     } catch (error) {
+      localStorage.removeItem("token");
       dispatch(setUser(null));
       dispatch(
         setError(
