@@ -1,6 +1,6 @@
 import cloudinary from "../middlewares/cloudinary.js";
 import Task from "../models/Task.Model.js";
-import User from "../models/User.model.js";
+import User from "../models/User.Model.js";
 import https from "https";
 
 
